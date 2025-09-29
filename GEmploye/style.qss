@@ -1,0 +1,75 @@
+/* Main Window background */
+QMainWindow {
+    background-image: url(":/backgrounds/your_background.jpg"); /* keep your existing bg */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* GroupBoxes with semi-transparent look */
+QGroupBox {
+    background-color: rgba(255, 255, 255, 180); /* translucent white */
+    border: 2px solid #a3c9c7;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    font: bold 13pt "Segoe UI";
+    color: #2e4a4b;
+}
+
+/* Title of groupbox */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 15px;
+    padding: 0 5px;
+    color: #356d65;
+    font-weight: bold;
+}
+
+/* Sidebar Menu Buttons */
+
+
+QPushButton:hover {
+    background-color: #cdebea;
+    border: 1px solid #7fb6b4;
+}
+
+QPushButton:pressed {
+    background-color: #4baaa9ff;
+}
+
+/* Quit Button special */
+#pushButton_6 {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #e4b9b9;
+}
+
+#pushButton_6:hover {
+    background-color: #e4b9b9;
+}
+
+/* Table Styling */
+QTableWidget {
+    background-color: #ffffff;
+    alternate-background-color: #f9fdfd;
+    gridline-color: #b5d9d7;
+    border: 1px solid #a3c9c7;
+    selection-background-color: #cdebea;
+    selection-color: #1c3334;
+    font: 11pt "Segoe UI";
+}
+
+QHeaderView::section {
+    background-color: #e6f2f2;
+    padding: 5px;
+    border: 1px solid #a3c9c7;
+    font: bold 11pt "Segoe UI";
+    color: #2e4a4b;
+}
+
+/* Title Label */
+QLabel#label {
+    font: italic bold 20pt "Segoe UI";
+    color: #356d65;
+}
