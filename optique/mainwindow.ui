@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1346</width>
+    <height>850</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(240, 255, 246);
+background-image: url(:/back.png);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>90</y>
+      <width>221</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);</string>
+     </property>
+     <property name="text">
+      <string>🧑‍💼Employee</string>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>150</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🚚Fournisseur</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>330</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>📦Produits</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>440</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🧾Ordonnance</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🧑‍💼Clients</string>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>191</width>
+       <height>101</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>-30</y>
+      <width>131</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/logo.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>150</y>
+      <width>1041</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-top-color: rgb(255, 227, 181);</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>30</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(168, 213, 186);
+color: rgb(51, 51, 51);
+
+</string>
+     </property>
+     <property name="text">
+      <string>➕Ajouter</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_7">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>30</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(168, 213, 186);
+color: rgb(51, 51, 51);</string>
+     </property>
+     <property name="text">
+      <string>✏️Modifier</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_8">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>30</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(168, 213, 186);
+color: rgb(51, 51, 51);</string>
+     </property>
+     <property name="text">
+      <string>🗑️Supprimer</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_9">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>30</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(168, 213, 186);
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>📤Exporter</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>1101</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);</string>
+     </property>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <column>
+      <property name="text">
+       <string>Id</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Stock</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Prix</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Couleur </string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Epaisseur</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Diametre</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Taille</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>Lunettes</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>50</string>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string>150.00</string>
+      </property>
+     </item>
+     <item row="0" column="4">
+      <property name="text">
+       <string>Noir</string>
+      </property>
+     </item>
+     <item row="0" column="5">
+      <property name="text">
+       <string>0.5cm</string>
+      </property>
+     </item>
+     <item row="0" column="6">
+      <property name="text">
+       <string>52mm</string>
+      </property>
+     </item>
+     <item row="0" column="7">
+      <property name="text">
+       <string>M</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>Lentilles</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>200</string>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="text">
+       <string>30.00</string>
+      </property>
+     </item>
+     <item row="1" column="4">
+      <property name="text">
+       <string>Blanc</string>
+      </property>
+     </item>
+     <item row="1" column="5">
+      <property name="text">
+       <string>0.2cm</string>
+      </property>
+     </item>
+     <item row="1" column="6">
+      <property name="text">
+       <string>14.0mm</string>
+      </property>
+     </item>
+     <item row="1" column="7">
+      <property name="text">
+       <string>8</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>Accessoirs</string>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>100</string>
+      </property>
+     </item>
+     <item row="2" column="3">
+      <property name="text">
+       <string>20.00</string>
+      </property>
+     </item>
+     <item row="2" column="4">
+      <property name="text">
+       <string>Noir</string>
+      </property>
+     </item>
+     <item row="2" column="5">
+      <property name="text">
+       <string>0.3cm</string>
+      </property>
+     </item>
+     <item row="2" column="6">
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item row="2" column="7">
+      <property name="text">
+       <string>L</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>Lunettes</string>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="text">
+       <string>25</string>
+      </property>
+     </item>
+     <item row="3" column="3">
+      <property name="text">
+       <string>180.00</string>
+      </property>
+     </item>
+     <item row="3" column="4">
+      <property name="text">
+       <string>Torroé</string>
+      </property>
+     </item>
+     <item row="3" column="5">
+      <property name="text">
+       <string>0.5cm</string>
+      </property>
+     </item>
+     <item row="3" column="6">
+      <property name="text">
+       <string>54mm</string>
+      </property>
+     </item>
+     <item row="3" column="7">
+      <property name="text">
+       <string>L</string>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="text">
+       <string>Lunettes</string>
+      </property>
+     </item>
+     <item row="4" column="2">
+      <property name="text">
+       <string>15</string>
+      </property>
+     </item>
+     <item row="4" column="3">
+      <property name="text">
+       <string>200.00</string>
+      </property>
+     </item>
+     <item row="4" column="4">
+      <property name="text">
+       <string>Gris</string>
+      </property>
+     </item>
+     <item row="4" column="5">
+      <property name="text">
+       <string>0.4cm</string>
+      </property>
+     </item>
+     <item row="4" column="6">
+      <property name="text">
+       <string>50mm</string>
+      </property>
+     </item>
+     <item row="4" column="7">
+      <property name="text">
+       <string>M</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QSpinBox" name="spinBox">
+     <property name="geometry">
+      <rect>
+       <x>960</x>
+       <y>310</y>
+       <width>44</width>
+       <height>29</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>1300</x>
+      <y>160</y>
+      <width>181</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ajouter un produit </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stock</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Prix</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>240</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Couleur</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>290</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Epaisseur</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>340</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Domare</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_11">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>380</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(168, 213, 186);
+color: rgb(51, 51, 51);</string>
+     </property>
+     <property name="text">
+      <string>➕Ajouter</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>90</y>
+       <width>82</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>150</y>
+       <width>82</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_3">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>210</y>
+       <width>82</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_4">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>260</y>
+       <width>82</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_5">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>310</y>
+       <width>82</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1346</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
