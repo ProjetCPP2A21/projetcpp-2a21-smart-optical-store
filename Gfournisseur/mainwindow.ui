@@ -26,121 +26,6 @@
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>-10</y>
-      <width>211</width>
-      <height>921</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(168, 213, 186);</string>
-    </property>
-    <property name="title">
-     <string/>
-    </property>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>100</y>
-       <width>211</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(168, 213, 186);
-color: rgb(51, 51, 51);</string>
-     </property>
-     <property name="text">
-      <string>Employee</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>150</width>
-       <height>150</height>
-      </size>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>180</y>
-       <width>211</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(168, 213, 186);
-color: rgb(51, 51, 51);</string>
-     </property>
-     <property name="text">
-      <string>Clients</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>191</width>
-       <height>101</height>
-      </size>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>260</y>
-       <width>211</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(168, 213, 186);
-background-color: rgb(255, 255, 127);
-color: rgb(51, 51, 51);</string>
-     </property>
-     <property name="text">
-      <string>Fournisseur</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>340</y>
-       <width>211</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(168, 213, 186);
-color: rgb(51, 51, 51);</string>
-     </property>
-     <property name="text">
-      <string>Produits</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_5">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>420</y>
-       <width>211</width>
-       <height>91</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(168, 213, 186);
-color: rgb(51, 51, 51);
-</string>
-     </property>
-     <property name="text">
-      <string>Ordonnance</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
@@ -152,7 +37,7 @@ color: rgb(51, 51, 51);
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
-background-color: rgb(255, 246, 151);</string>
+background-color: rgb(168, 213, 186);</string>
     </property>
     <property name="title">
      <string/>
@@ -261,6 +146,10 @@ color: rgb(51, 51, 51);</string>
        <height>24</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);
+</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_2">
      <property name="geometry">
@@ -270,6 +159,9 @@ color: rgb(51, 51, 51);</string>
        <width>113</width>
        <height>24</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_3">
@@ -281,6 +173,9 @@ color: rgb(51, 51, 51);</string>
        <height>24</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_4">
      <property name="geometry">
@@ -290,6 +185,9 @@ color: rgb(51, 51, 51);</string>
        <width>113</width>
        <height>24</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_5">
@@ -301,6 +199,9 @@ color: rgb(51, 51, 51);</string>
        <height>24</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit_6">
      <property name="geometry">
@@ -310,6 +211,9 @@ color: rgb(51, 51, 51);</string>
        <width>113</width>
        <height>24</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_9">
@@ -334,6 +238,9 @@ color: rgb(51, 51, 51);</string>
        <height>24</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
@@ -346,8 +253,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-top-color: rgb(255, 227, 181);
-background-color: rgb(255, 246, 151);</string>
+     <string notr="true">background-color: rgb(168, 213, 186);</string>
     </property>
     <property name="title">
      <string/>
@@ -418,7 +324,9 @@ color: rgb(51, 51, 51);</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 127);</string>
+      <string notr="true">background-color: rgb(168, 213, 186);
+gridline-color: rgb(0, 0, 0);
+color: rgb(0, 0, 0);</string>
      </property>
      <property name="gridStyle">
       <enum>Qt::PenStyle::DashLine</enum>
@@ -469,25 +377,253 @@ color: rgb(51, 51, 51);</string>
      </column>
     </widget>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>70</y>
-      <width>231</width>
-      <height>20</height>
+      <x>230</x>
+      <y>590</y>
+      <width>161</width>
+      <height>511</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>GroupBox</string>
+    </property>
+    <widget class="QPushButton" name="pushButton_9">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>50</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>employe</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_10">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>130</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>produit</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_12">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>200</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>client</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_13">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>360</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>statistique</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_14">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>270</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>assurance</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_15">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>450</y>
+       <width>90</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>quitter</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>130</y>
+      <width>221</width>
+      <height>631</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);</string>
+     </property>
+     <property name="text">
+      <string>👤Employee</string>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>150</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>240</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🚚Fournisseur</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>350</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>📦Produits</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>460</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🧾Ordonnance</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>201</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 18pt &quot;Segoe UI&quot;;
+
+color: rgb(51, 51, 51);
+</string>
+     </property>
+     <property name="text">
+      <string>🧑‍💼Clients</string>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>191</width>
+       <height>101</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>20</y>
+      <width>141</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="../../Downloads/optique 2/optique/images.qrc">:/logo.png</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>80</y>
+      <width>281</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(170, 85, 0);
-font: 700 16pt &quot;Segoe UI&quot;;</string>
+     <string notr="true">color: rgb(0, 0, 0);
+font: 14pt &quot;Segoe UI&quot;;</string>
     </property>
     <property name="text">
-     <string>Gestion de Fournisseur</string>
+     <string>Gestion Fournisseur</string>
     </property>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../Downloads/optique 2/optique/images.qrc"/>
+ </resources>
  <connections/>
 </ui>

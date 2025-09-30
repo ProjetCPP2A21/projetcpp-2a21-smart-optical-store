@@ -54,6 +54,20 @@ public:
     QPushButton *pushButton_8;
     QTableWidget *tableWidget_2;
     QLabel *label_10;
+    QGroupBox *groupBox_4;
+    QPushButton *pushButton_9;
+    QPushButton *pushButton_10;
+    QPushButton *pushButton_12;
+    QPushButton *pushButton_13;
+    QPushButton *pushButton_14;
+    QPushButton *pushButton_15;
+    QGroupBox *groupBox_5;
+    QPushButton *pushButton_16;
+    QPushButton *pushButton_17;
+    QPushButton *pushButton_18;
+    QPushButton *pushButton_19;
+    QPushButton *pushButton_20;
+    QPushButton *pushButton_21;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -109,7 +123,7 @@ public:
         groupBox_3->setObjectName("groupBox_3");
         groupBox_3->setGeometry(QRect(1180, 100, 181, 501));
         groupBox_3->setStyleSheet(QString::fromUtf8("color: rgb(0, 0, 0);\n"
-"background-color: rgb(255, 246, 151);"));
+"background-color: rgb(168, 213, 186);"));
         label_3 = new QLabel(groupBox_3);
         label_3->setObjectName("label_3");
         label_3->setGeometry(QRect(10, 10, 63, 20));
@@ -136,32 +150,39 @@ public:
         lineEdit = new QLineEdit(groupBox_3);
         lineEdit->setObjectName("lineEdit");
         lineEdit->setGeometry(QRect(30, 30, 113, 24));
+        lineEdit->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
+""));
         lineEdit_2 = new QLineEdit(groupBox_3);
         lineEdit_2->setObjectName("lineEdit_2");
         lineEdit_2->setGeometry(QRect(30, 80, 113, 24));
+        lineEdit_2->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         lineEdit_3 = new QLineEdit(groupBox_3);
         lineEdit_3->setObjectName("lineEdit_3");
         lineEdit_3->setGeometry(QRect(30, 130, 113, 24));
+        lineEdit_3->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         lineEdit_4 = new QLineEdit(groupBox_3);
         lineEdit_4->setObjectName("lineEdit_4");
         lineEdit_4->setGeometry(QRect(30, 180, 113, 24));
+        lineEdit_4->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         lineEdit_5 = new QLineEdit(groupBox_3);
         lineEdit_5->setObjectName("lineEdit_5");
         lineEdit_5->setGeometry(QRect(30, 230, 113, 24));
+        lineEdit_5->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         lineEdit_6 = new QLineEdit(groupBox_3);
         lineEdit_6->setObjectName("lineEdit_6");
         lineEdit_6->setGeometry(QRect(30, 280, 113, 24));
+        lineEdit_6->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         label_9 = new QLabel(groupBox_3);
         label_9->setObjectName("label_9");
         label_9->setGeometry(QRect(10, 310, 131, 20));
         lineEdit_7 = new QLineEdit(groupBox_3);
         lineEdit_7->setObjectName("lineEdit_7");
         lineEdit_7->setGeometry(QRect(30, 330, 113, 24));
+        lineEdit_7->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         groupBox_2 = new QGroupBox(centralwidget);
         groupBox_2->setObjectName("groupBox_2");
         groupBox_2->setGeometry(QRect(250, 190, 811, 331));
-        groupBox_2->setStyleSheet(QString::fromUtf8("border-top-color: rgb(255, 227, 181);\n"
-"background-color: rgb(255, 246, 151);"));
+        groupBox_2->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);"));
         pushButton_6 = new QPushButton(groupBox_2);
         pushButton_6->setObjectName("pushButton_6");
         pushButton_6->setGeometry(QRect(410, 250, 90, 29));
@@ -210,6 +231,48 @@ public:
         label_10->setGeometry(QRect(290, 70, 231, 20));
         label_10->setStyleSheet(QString::fromUtf8("color: rgb(170, 85, 0);\n"
 "font: 700 16pt \"Segoe UI\";"));
+        groupBox_4 = new QGroupBox(centralwidget);
+        groupBox_4->setObjectName("groupBox_4");
+        groupBox_4->setGeometry(QRect(230, 590, 161, 511));
+        pushButton_9 = new QPushButton(groupBox_4);
+        pushButton_9->setObjectName("pushButton_9");
+        pushButton_9->setGeometry(QRect(40, 50, 90, 29));
+        pushButton_10 = new QPushButton(groupBox_4);
+        pushButton_10->setObjectName("pushButton_10");
+        pushButton_10->setGeometry(QRect(40, 130, 90, 29));
+        pushButton_12 = new QPushButton(groupBox_4);
+        pushButton_12->setObjectName("pushButton_12");
+        pushButton_12->setGeometry(QRect(40, 200, 90, 29));
+        pushButton_13 = new QPushButton(groupBox_4);
+        pushButton_13->setObjectName("pushButton_13");
+        pushButton_13->setGeometry(QRect(40, 360, 90, 29));
+        pushButton_14 = new QPushButton(groupBox_4);
+        pushButton_14->setObjectName("pushButton_14");
+        pushButton_14->setGeometry(QRect(40, 270, 90, 29));
+        pushButton_15 = new QPushButton(groupBox_4);
+        pushButton_15->setObjectName("pushButton_15");
+        pushButton_15->setGeometry(QRect(40, 450, 90, 29));
+        groupBox_5 = new QGroupBox(centralwidget);
+        groupBox_5->setObjectName("groupBox_5");
+        groupBox_5->setGeometry(QRect(280, 130, 161, 511));
+        pushButton_16 = new QPushButton(groupBox_5);
+        pushButton_16->setObjectName("pushButton_16");
+        pushButton_16->setGeometry(QRect(40, 50, 90, 29));
+        pushButton_17 = new QPushButton(groupBox_5);
+        pushButton_17->setObjectName("pushButton_17");
+        pushButton_17->setGeometry(QRect(40, 130, 90, 29));
+        pushButton_18 = new QPushButton(groupBox_5);
+        pushButton_18->setObjectName("pushButton_18");
+        pushButton_18->setGeometry(QRect(40, 200, 90, 29));
+        pushButton_19 = new QPushButton(groupBox_5);
+        pushButton_19->setObjectName("pushButton_19");
+        pushButton_19->setGeometry(QRect(40, 360, 90, 29));
+        pushButton_20 = new QPushButton(groupBox_5);
+        pushButton_20->setObjectName("pushButton_20");
+        pushButton_20->setGeometry(QRect(40, 270, 90, 29));
+        pushButton_21 = new QPushButton(groupBox_5);
+        pushButton_21->setObjectName("pushButton_21");
+        pushButton_21->setGeometry(QRect(40, 450, 90, 29));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -254,6 +317,20 @@ public:
         QTableWidgetItem *___qtablewidgetitem6 = tableWidget_2->horizontalHeaderItem(6);
         ___qtablewidgetitem6->setText(QCoreApplication::translate("MainWindow", "Condition de paiement", nullptr));
         label_10->setText(QCoreApplication::translate("MainWindow", "Gestion de Fournisseur", nullptr));
+        groupBox_4->setTitle(QCoreApplication::translate("MainWindow", "GroupBox", nullptr));
+        pushButton_9->setText(QCoreApplication::translate("MainWindow", "employe", nullptr));
+        pushButton_10->setText(QCoreApplication::translate("MainWindow", "produit", nullptr));
+        pushButton_12->setText(QCoreApplication::translate("MainWindow", "client", nullptr));
+        pushButton_13->setText(QCoreApplication::translate("MainWindow", "statistique", nullptr));
+        pushButton_14->setText(QCoreApplication::translate("MainWindow", "assurance", nullptr));
+        pushButton_15->setText(QCoreApplication::translate("MainWindow", "quitter", nullptr));
+        groupBox_5->setTitle(QCoreApplication::translate("MainWindow", "GroupBox", nullptr));
+        pushButton_16->setText(QCoreApplication::translate("MainWindow", "employe", nullptr));
+        pushButton_17->setText(QCoreApplication::translate("MainWindow", "produit", nullptr));
+        pushButton_18->setText(QCoreApplication::translate("MainWindow", "client", nullptr));
+        pushButton_19->setText(QCoreApplication::translate("MainWindow", "statistique", nullptr));
+        pushButton_20->setText(QCoreApplication::translate("MainWindow", "assurance", nullptr));
+        pushButton_21->setText(QCoreApplication::translate("MainWindow", "quitter", nullptr));
     } // retranslateUi
 
 };
