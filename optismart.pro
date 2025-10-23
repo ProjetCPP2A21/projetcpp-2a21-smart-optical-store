@@ -10,14 +10,28 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    authentification.cpp \
+    client.cpp \
+    connection.cpp \
+    employe.cpp \
+    fournisseur.cpp \
     main.cpp \
-    gemployev1.cpp
+    optismart.cpp \
+    ordonnance.cpp \
+    produit.cpp
 
 HEADERS += \
-    gemployev1.h
+    authentification.h \
+    client.h \
+    connection.h \
+    employe.h \
+    fournisseur.h \
+    optismart.h \
+    ordonnance.h \
+    produit.h
 
 FORMS += \
-    gemployev1.ui
+    optismart.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,33 +1,34 @@
-#ifndef GEMPLOYEV1_H
-#define GEMPLOYEV1_H
+#ifndef OPTISMART_H
+#define OPTISMART_H
 
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include<QSqlQueryModel>
+#include <QWidget>
+#include "ui_optismart.h"
+
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Gemploye;
+class optismart;
 }
 QT_END_NAMESPACE
 
-class Gemploye : public QMainWindow
+class optismart : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Gemploye(QWidget *parent = nullptr);
-    ~Gemploye();
+    optismart(QWidget *parent = nullptr);
+    ~optismart();
+
 
 private:
-    Ui::Gemploye *ui;
-};
-class Connection
-{
-public:
-    Connection();
-    bool createconnect();
+    Ui::optismart *ui;
 };
 
-#endif // GEMPLOYEV1_H
+#endif // OPTISMART_H

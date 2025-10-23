@@ -1,5 +1,5 @@
-#include "gemployev1.h"
-
+#include "optismart.h"
+#include "connection.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -23,12 +23,14 @@ void loadStyleSheet(QApplication& app, const QString& filename) {
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Gemploye w;
+    optismart w;
     w.show();
-    Connection c;
-    bool test=c.createconnect();
+    Connection* c= Connection::instance();
+
+    bool test=c->createConnect();
     if(test)
-    {w.show();
+    {
+        w.show();
         QMessageBox::information(nullptr, QObject::tr("database is open"),
                                  QObject::tr("connection successful.\n"
                                              "Click Cancel to exit."), QMessageBox::Cancel);

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>logo1.png</file>
+        <file>quitter.png</file>
+        <file>pngegg (1) (1).png</file>
+        <file>../../../../Downloads/pngegg (1) (1) (1).png</file>
     </qresource>
 </RCC>
