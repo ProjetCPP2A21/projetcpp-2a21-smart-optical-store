@@ -327,9 +327,9 @@ font: 11pt &quot;Segoe UI&quot;;</string>
       <widget class="QLabel" name="label_4">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>12</x>
          <y>260</y>
-         <width>63</width>
+         <width>71</width>
          <height>20</height>
         </rect>
        </property>
@@ -338,7 +338,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 color: rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>Prénon:</string>
+        <string>Prénom:</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_3">
@@ -504,7 +504,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 color: rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>Poste</string>
+        <string>Login</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="linepassword_e">
@@ -3462,6 +3462,7 @@ color: rgb(0, 0, 0);</string>
       </widget>
      </widget>
     </widget>
+    <widget class="QWidget" name="stats_e"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

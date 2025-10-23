@@ -1,6 +1,7 @@
 #include "employe.h"
 
 
+
 employe::employe(Ui::optismart *ui, QObject *parent)
     : QObject(parent), ui(ui)
 {
@@ -35,6 +36,10 @@ employe::employe(Ui::optismart *ui, QObject *parent)
     QObject::connect(ui->brechercher_e, &QPushButton::clicked, this, [this]() {
 
         this->rechercherParNom();
+    });
+    QObject::connect(ui->bstatistique_e, &QPushButton::clicked, this, [this]() {
+        this->afficherStatistiques();
+
     });
 
 }
@@ -220,7 +225,7 @@ bool employe::exporterPdf(const QString &fichier)
     }
     if (QFileInfo(outputPath).suffix().toLower() != "pdf")
         outputPath += ".pdf";
-/*
+
     QPrinter printer(QPrinter::PrinterResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(outputPath);
@@ -228,8 +233,54 @@ bool employe::exporterPdf(const QString &fichier)
 
     QTextDocument doc;
     doc.setHtml(html);
-    doc.print(&printer);*/
+    doc.print(&printer);
 
     QMessageBox::information(nullptr, "PDF exporté", "Le fichier a été enregistré sous :\n" + outputPath);
     return true;
+}
+
+
+
+    void employe::afficherStatistiques()
+{
+    ui->stackedWidget->setCurrentWidget(ui->stats_e);
+    // 1️⃣ Préparer les données
+    QSqlQuery query;
+    if (!query.exec("SELECT poste, COUNT(*) FROM employe GROUP BY poste")) {
+        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        return;
+    }
+
+
+    QPieSeries *series = new QPieSeries();
+    while (query.next()) {
+        QString poste = query.value(0).toString();
+        int count = query.value(1).toInt();
+        series->append(poste + " (" + QString::number(count) + ")", count);
+    }
+
+    if (series->isEmpty()) {
+        QMessageBox::information(nullptr, "Statistiques", "Aucune donnée à afficher.");
+        return;
+    }
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des employés par poste");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // Améliorer l’affichage
+    for (auto slice : series->slices()) {
+        slice->setLabelVisible(true);
+        slice->setLabelFont(QFont("Arial", 9));
+    }
+
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    QLayout *oldLayout = ui->stats_e->layout();
+    if (oldLayout) delete oldLayout;
+
+    QVBoxLayout *layout = new QVBoxLayout(ui->stats_e);
+    layout->addWidget(chartView);
 }

@@ -14,6 +14,12 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QFileInfo>
+#include <QtPrintSupport/QPrinter>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QChartView>
+#include <QtCharts/QChart>
+#include <QtCharts/QPieSlice>
+#include <QVBoxLayout>
 
 #include "ui_optismart.h"
 
@@ -66,6 +72,7 @@ public:
     void rechercherParNom();
     QSqlQueryModel *rechercher(const QString &nom);
     bool exporterPdf(const QString &fichier);
+    void afficherStatistiques();
 
     // --- Interaction UI ---
     void chargerDepuisUI();
