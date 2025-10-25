@@ -68,8 +68,8 @@ optismart::optismart(QWidget *parent)
     connect(ui->bf_6, &QPushButton::clicked, this, [=]() { setPage(3); });
     connect(ui->bo_6, &QPushButton::clicked, this, [=]() { setPage(4); });
 
-    // Page d’accueil : afficher la page d’authentification au démarrage
-    /*ui->stackedWidget->setCurrentIndex(5); // si ta page authentification est la dernière*/
+
+    /*ui->stackedWidget->setCurrentIndex(5);*/
 }
 
 optismart::~optismart()

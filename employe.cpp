@@ -54,7 +54,10 @@ void employe::chargerDepuisUI()
     email = ui->lineemail_e->text();
     num_tel = ui->linetel_e->text();
     poste = ui->lineposte_e->text();
+    login = ui->linelogin_e->text();
+    password = ui->linepassword_e->text();
 }
+
 void employe::rechercherParNom()
 {
     QString nom = ui->linerechercher_e->text();
@@ -110,8 +113,8 @@ bool employe::ajouter()
     query.bindValue(":email", email);
     query.bindValue(":num_tel", num_tel);
     query.bindValue(":poste", poste);
-    query.bindValue(":login", num_tel);
-    query.bindValue(":password", poste);
+    query.bindValue(":login", login);
+    query.bindValue(":password", password);
 
     if (!query.exec()) {
         QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
