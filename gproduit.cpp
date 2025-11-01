@@ -15,14 +15,7 @@ gproduit::gproduit(QWidget *parent)
     , selectedIdProduit(-1) // Initialisation à -1 (valeur invalide)
 {
     ui->setupUi(this);
-    connect(ui->ajouterButton, &QPushButton::clicked, this, &gproduit::on_ajouterButton_clicked);
-    connect(ui->supprimerButton, &QPushButton::clicked, this, &gproduit::on_supprimerButton_clicked);
-    connect(ui->modifierButton, &QPushButton::clicked, this, &gproduit::on_modifierButton_clicked);
-    connect(ui->tableWidget_p_2, &QTableView::doubleClicked, this, &gproduit::on_tableWidget_p_2_doubleClicked);
-    connect(ui->searchButton, &QPushButton::clicked, this, &gproduit::on_searchButton_clicked);
-    connect(ui->exportPdfButton, &QPushButton::clicked, this, &gproduit::on_exportPdfButton_clicked);
-    connect(ui->statsButton, &QPushButton::clicked, this, &gproduit::on_statsButton_clicked);
-    connect(ui->trierButton, &QPushButton::clicked, this, &gproduit::on_trierButton_clicked);
+
     QSqlQueryModel* model = Ptmp.afficher();
     if (model->rowCount() > 0) {
         ui->tableWidget_p_2->setModel(model);

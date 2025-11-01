@@ -77,3 +77,17 @@ QSqlQueryModel* produit::afficher()
     model->setQuery("SELECT * FROM produit");
     return model;
 }
+QSqlQueryModel* produit::trier() {
+    QSqlQueryModel* model = new QSqlQueryModel();
+    model->setQuery("SELECT * FROM produit ORDER BY type");
+    return model;
+}
+QSqlQueryModel* produit::rechercher() {
+    QSqlQueryModel* model = new QSqlQueryModel();
+    QSqlQuery q;
+    q.prepare("SELECT * FROM produit WHERE type LIKE :type");
+    q.bindValue(":type", "%" + type + "%");
+    q.exec();
+    model->setQuery(q);
+    return model;
+}
