@@ -670,7 +670,7 @@ font: 18pt &quot;Segoe UI&quot;;
         <string>fournisseur</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="benregistrer_e_8">
+      <widget class="QPushButton" name="bquitter_e">
        <property name="geometry">
         <rect>
          <x>80</x>
@@ -3462,7 +3462,39 @@ color: rgb(0, 0, 0);</string>
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="stats_e"/>
+    <widget class="QWidget" name="stats_e">
+     <widget class="QGroupBox" name="groupBox_stats">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>110</y>
+        <width>1301</width>
+        <height>671</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="bretour_stats_e">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>40</y>
+        <width>161</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);</string>
+      </property>
+      <property name="text">
+       <string>retour</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -41,7 +41,24 @@ employe::employe(Ui::optismart *ui, QObject *parent)
         this->afficherStatistiques();
 
     });
+    QObject::connect(ui->bajouter_e, &QPushButton::clicked, this, [this]() {
+        if (!this->verifierChamps()) return;
+        this->chargerDepuisUI();
+        if (this->ajouter())
+            this->afficherDansTable();
+    });
+    QObject::connect(ui->bretour_stats_e, &QPushButton::clicked, this, [this]() {
+        this->retourstats_e();
+    });
+    QObject::connect(ui->bquitter_e, &QPushButton::clicked, this, [this]() {
+        this->quitter();
+    });
 
+
+
+}
+void employe::quitter(){
+    QApplication::quit();
 }
 
 // -------------------- Charger les données depuis l'UI --------------------
@@ -57,6 +74,65 @@ void employe::chargerDepuisUI()
     login = ui->linelogin_e->text();
     password = ui->linepassword_e->text();
 }
+// -------------------- Controle de saisie sur les champs --------------------
+
+bool employe::verifierChamps()
+{
+    if (ui->lineid_e->text().isEmpty() ||
+        ui->linenom_e->text().isEmpty() ||
+        ui->lineprenon_e->text().isEmpty() ||
+        ui->lineemail_e->text().isEmpty() ||
+        ui->linetel_e->text().isEmpty()) {
+        QMessageBox::warning(nullptr, "Champs obligatoires",
+                             "Veuillez remplir tous les champs obligatoires.");
+        return false;
+    }
+
+    // Validation email
+    QRegularExpression regexEmail("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    if (!regexEmail.match(ui->lineemail_e->text()).hasMatch()) {
+        QMessageBox::warning(nullptr, "Email invalide", "Veuillez entrer une adresse email valide.");
+        return false;
+    }
+
+    // Validation numéro téléphone (ex: 8 chiffres)
+    QRegularExpression regexTel("^\\d{8,10}$");
+    if (!regexTel.match(ui->linetel_e->text()).hasMatch()) {
+        QMessageBox::warning(nullptr, "Téléphone invalide",
+                             "Le numéro de téléphone doit contenir entre 8 et 10 chiffres.");
+        return false;
+    }
+
+    return true;
+}
+// -------------------- Traduction erreurs oracle --------------------
+QString employe::traduireErreurOracle(const QString &messageErreur)
+{
+    if (messageErreur.contains("ORA-00001"))
+        return "Cet enregistrement existe déjà (violation de clé unique).";
+    if (messageErreur.contains("ORA-01400"))
+        return "Certains champs obligatoires ne sont pas remplis.";
+    if (messageErreur.contains("ORA-02291"))
+        return "Référence non valide : un champ lié n'existe pas.";
+    if (messageErreur.contains("ORA-02292"))
+        return "Impossible de supprimer cet élément car il est lié à d'autres enregistrements.";
+    if (messageErreur.contains("ORA-12899"))
+        return "La valeur saisie dépasse la taille maximale autorisée pour un champ.";
+    if (messageErreur.contains("ORA-00904"))
+        return "Une colonne ou une valeur utilisée est invalide.";
+    if (messageErreur.contains("ORA-01017"))
+        return "Identifiant ou mot de passe Oracle incorrect.";
+    if (messageErreur.contains("ORA-12170"))
+        return "Connexion au serveur Oracle impossible (délai d'attente dépassé).";
+
+    // Par défaut : message brut mais plus lisible
+    return "Erreur Oracle : " + messageErreur;
+}
+void employe::retourstats_e(){
+    ui->stackedWidget->setCurrentWidget(ui->employe);
+
+}
+
 
 void employe::rechercherParNom()
 {
@@ -72,7 +148,8 @@ void employe::rechercherParNom()
     query.bindValue(":nom", nom);
 
     if (!query.exec()) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QString message = traduireErreurOracle(query.lastError().text());
+    QMessageBox::critical(nullptr, "Erreur SQL", message);
         return;
     }
 
@@ -117,7 +194,8 @@ bool employe::ajouter()
     query.bindValue(":password", password);
 
     if (!query.exec()) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QString message = traduireErreurOracle(query.lastError().text());
+    QMessageBox::critical(nullptr, "Erreur SQL", message);
         return false;
     }
 
@@ -141,7 +219,8 @@ bool employe::modifier()
 
 
     if (!query.exec()) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QString message = traduireErreurOracle(query.lastError().text());
+    QMessageBox::critical(nullptr, "Erreur SQL", message);
         return false;
     }
 
@@ -157,7 +236,8 @@ bool employe::supprimer(int id)
     query.bindValue(":id", id);
 
     if (!query.exec()) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QString message = traduireErreurOracle(query.lastError().text());
+    QMessageBox::critical(nullptr, "Erreur SQL", message);
         return false;
     }
 
@@ -199,7 +279,8 @@ bool employe::exporterPdf(const QString &fichier)
 {
     QSqlQuery query;
     if (!query.exec("SELECT id_employe, nom, prenom, email, num_tel, poste FROM employe ORDER BY id_employe")) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QString message = traduireErreurOracle(query.lastError().text());
+    QMessageBox::critical(nullptr, "Erreur SQL", message);
         return false;
     }
 
@@ -244,46 +325,64 @@ bool employe::exporterPdf(const QString &fichier)
 
 
 
-    void employe::afficherStatistiques()
+void employe::afficherStatistiques()
 {
+    // si tu veux toujours naviguer vers la page stats
     ui->stackedWidget->setCurrentWidget(ui->stats_e);
-    // 1️⃣ Préparer les données
+
+    // 1) Récupérer les données
     QSqlQuery query;
     if (!query.exec("SELECT poste, COUNT(*) FROM employe GROUP BY poste")) {
-        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        QMessageBox::critical(nullptr, "Erreur SQL", traduireErreurOracle(query.lastError().text()));
         return;
     }
 
-
-    QPieSeries *series = new QPieSeries();
+    // 2) Construire la série
+    auto *series = new QPieSeries();
     while (query.next()) {
-        QString poste = query.value(0).toString();
-        int count = query.value(1).toInt();
-        series->append(poste + " (" + QString::number(count) + ")", count);
+        const QString poste = query.value(0).toString();
+        const int count = query.value(1).toInt();
+        series->append(QString("%1 (%2)").arg(poste).arg(count), count);
     }
 
     if (series->isEmpty()) {
         QMessageBox::information(nullptr, "Statistiques", "Aucune donnée à afficher.");
+        series->deleteLater();
         return;
     }
 
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Répartition des employés par poste");
-    chart->setAnimationOptions(QChart::SeriesAnimations);
-
-    // Améliorer l’affichage
     for (auto slice : series->slices()) {
         slice->setLabelVisible(true);
         slice->setLabelFont(QFont("Arial", 9));
     }
 
+    // 3) Créer le chart + view
+    auto *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des employés par poste");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    QChartView *chartView = new QChartView(chart);
+    auto *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    QLayout *oldLayout = ui->stats_e->layout();
-    if (oldLayout) delete oldLayout;
 
-    QVBoxLayout *layout = new QVBoxLayout(ui->stats_e);
+    // 4) Injecter dans le QGroupBox (au lieu de stats_e directement)
+    QGroupBox *box = ui->groupBox_stats; // 🔁 remplace par le nom exact si différent
+
+    // Nettoyer l'ancien contenu/layout du groupbox
+    if (QLayout *old = box->layout()) {
+        QLayoutItem *it;
+        while ((it = old->takeAt(0)) != nullptr) {
+            if (QWidget *w = it->widget()) w->deleteLater();
+            delete it;
+        }
+        delete old;
+    }
+
+    // Nouveau layout pour le groupbox
+    auto *layout = new QVBoxLayout();
+    layout->setContentsMargins(8, 8, 8, 8);
+    layout->setSpacing(8);
     layout->addWidget(chartView);
+    box->setLayout(layout);
 }
+

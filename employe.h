@@ -77,6 +77,11 @@ public:
     // --- Interaction UI ---
     void chargerDepuisUI();
     void afficherDansTable();
+    bool verifierChamps();
+    void retourstats_e();
+    void quitter();
+    QString traduireErreurOracle(const QString &messageErreur);
+
 
 };
 
