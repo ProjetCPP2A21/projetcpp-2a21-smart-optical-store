@@ -35,22 +35,23 @@ public:
     QPushButton *pushButton_8;
     QPushButton *pushButton_9;
     QTableWidget *tableWidget;
-    QPushButton *quitButton;
+    QPushButton *btnModifier;
     QLabel *label_3;
-    QLineEdit *medecinEdit;
+    QLineEdit *lineEditMedecin;
     QLabel *label_5;
     QLabel *label_4;
-    QLineEdit *nomEdit;
+    QLineEdit *lineEditNom;
     QDateEdit *dateEdit;
     QLabel *label_7;
     QLabel *label_6;
-    QLineEdit *prenomEdit;
+    QLineEdit *lineEditPrenom;
     QLabel *label_2;
-    QLineEdit *cinEdit;
-    QPushButton *addButton;
+    QLineEdit *lineEditCIN;
+    QPushButton *btnAjouter;
     QLabel *label;
     QLabel *label_9;
     QPushButton *pushButton;
+    QPushButton *btnSupprimer;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *Gordonnance)
@@ -125,19 +126,19 @@ public:
         tableWidget->setObjectName("tableWidget");
         tableWidget->setGeometry(QRect(410, 170, 511, 201));
         tableWidget->setStyleSheet(QString::fromUtf8("color: rgb(0, 0, 0);"));
-        quitButton = new QPushButton(centralwidget);
-        quitButton->setObjectName("quitButton");
-        quitButton->setGeometry(QRect(1040, 430, 81, 31));
-        quitButton->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        btnModifier = new QPushButton(centralwidget);
+        btnModifier->setObjectName("btnModifier");
+        btnModifier->setGeometry(QRect(1040, 430, 81, 31));
+        btnModifier->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         label_3 = new QLabel(centralwidget);
         label_3->setObjectName("label_3");
         label_3->setGeometry(QRect(1000, 210, 49, 16));
         label_3->setStyleSheet(QString::fromUtf8("color: rgb(0, 0, 0);"));
-        medecinEdit = new QLineEdit(centralwidget);
-        medecinEdit->setObjectName("medecinEdit");
-        medecinEdit->setGeometry(QRect(1060, 340, 151, 24));
+        lineEditMedecin = new QLineEdit(centralwidget);
+        lineEditMedecin->setObjectName("lineEditMedecin");
+        lineEditMedecin->setGeometry(QRect(1060, 340, 151, 24));
         label_5 = new QLabel(centralwidget);
         label_5->setObjectName("label_5");
         label_5->setGeometry(QRect(1000, 300, 49, 16));
@@ -147,9 +148,9 @@ public:
         label_4->setGeometry(QRect(1000, 250, 49, 16));
         label_4->setStyleSheet(QString::fromUtf8("color: rgb(0, 0, 0);\n"
 ""));
-        nomEdit = new QLineEdit(centralwidget);
-        nomEdit->setObjectName("nomEdit");
-        nomEdit->setGeometry(QRect(1040, 300, 171, 24));
+        lineEditNom = new QLineEdit(centralwidget);
+        lineEditNom->setObjectName("lineEditNom");
+        lineEditNom->setGeometry(QRect(1040, 300, 171, 24));
         dateEdit = new QDateEdit(centralwidget);
         dateEdit->setObjectName("dateEdit");
         dateEdit->setGeometry(QRect(1050, 390, 110, 25));
@@ -163,21 +164,21 @@ public:
         label_6->setObjectName("label_6");
         label_6->setGeometry(QRect(1000, 340, 49, 16));
         label_6->setStyleSheet(QString::fromUtf8("color: rgb(0, 0, 0);"));
-        prenomEdit = new QLineEdit(centralwidget);
-        prenomEdit->setObjectName("prenomEdit");
-        prenomEdit->setGeometry(QRect(1050, 250, 141, 24));
+        lineEditPrenom = new QLineEdit(centralwidget);
+        lineEditPrenom->setObjectName("lineEditPrenom");
+        lineEditPrenom->setGeometry(QRect(1050, 250, 141, 24));
         label_2 = new QLabel(centralwidget);
         label_2->setObjectName("label_2");
         label_2->setGeometry(QRect(1030, 100, 361, 101));
         label_2->setStyleSheet(QString::fromUtf8("font: 700 italic 10pt \"Segoe UI\";\n"
 "color: rgb(0, 0, 0);"));
-        cinEdit = new QLineEdit(centralwidget);
-        cinEdit->setObjectName("cinEdit");
-        cinEdit->setGeometry(QRect(1040, 210, 141, 24));
-        addButton = new QPushButton(centralwidget);
-        addButton->setObjectName("addButton");
-        addButton->setGeometry(QRect(940, 430, 81, 31));
-        addButton->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        lineEditCIN = new QLineEdit(centralwidget);
+        lineEditCIN->setObjectName("lineEditCIN");
+        lineEditCIN->setGeometry(QRect(1040, 210, 141, 24));
+        btnAjouter = new QPushButton(centralwidget);
+        btnAjouter->setObjectName("btnAjouter");
+        btnAjouter->setGeometry(QRect(940, 430, 81, 31));
+        btnAjouter->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         label = new QLabel(centralwidget);
@@ -200,6 +201,12 @@ public:
         pushButton->setObjectName("pushButton");
         pushButton->setGeometry(QRect(1140, 430, 91, 31));
         pushButton->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+"font: 14pt \"Segoe UI\";\n"
+"color: rgb(51, 51, 51);"));
+        btnSupprimer = new QPushButton(centralwidget);
+        btnSupprimer->setObjectName("btnSupprimer");
+        btnSupprimer->setGeometry(QRect(1039, 483, 101, 31));
+        btnSupprimer->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         Gordonnance->setCentralWidget(centralwidget);
@@ -231,17 +238,18 @@ public:
         ___qtablewidgetitem3->setText(QCoreApplication::translate("Gordonnance", "Medecin", nullptr));
         QTableWidgetItem *___qtablewidgetitem4 = tableWidget->horizontalHeaderItem(4);
         ___qtablewidgetitem4->setText(QCoreApplication::translate("Gordonnance", "Date", nullptr));
-        quitButton->setText(QCoreApplication::translate("Gordonnance", "Modifier", nullptr));
+        btnModifier->setText(QCoreApplication::translate("Gordonnance", "Modifier", nullptr));
         label_3->setText(QCoreApplication::translate("Gordonnance", "CIN:", nullptr));
         label_5->setText(QCoreApplication::translate("Gordonnance", "Nom:", nullptr));
         label_4->setText(QCoreApplication::translate("Gordonnance", "Prenom:", nullptr));
         label_7->setText(QCoreApplication::translate("Gordonnance", "Date:", nullptr));
         label_6->setText(QCoreApplication::translate("Gordonnance", "Medecin:", nullptr));
         label_2->setText(QCoreApplication::translate("Gordonnance", "Ajouter une ordonnance", nullptr));
-        addButton->setText(QCoreApplication::translate("Gordonnance", "Ajouter", nullptr));
+        btnAjouter->setText(QCoreApplication::translate("Gordonnance", "Ajouter", nullptr));
         label->setText(QCoreApplication::translate("Gordonnance", "Gestion des ordonnance", nullptr));
         label_9->setText(QString());
         pushButton->setText(QCoreApplication::translate("Gordonnance", "Recherche", nullptr));
+        btnSupprimer->setText(QCoreApplication::translate("Gordonnance", "Supprimer", nullptr));
     } // retranslateUi
 
 };

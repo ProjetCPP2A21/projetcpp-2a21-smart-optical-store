@@ -7,8 +7,16 @@
 class Connection
 {
 public:
-    Connection();
+    static Connection* instance();
     bool createconnect();
+
+private:
+    Connection();
+    ~Connection();
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
+
+    static Connection* p_instance;
 };
 
 #endif // CONNECTION_H

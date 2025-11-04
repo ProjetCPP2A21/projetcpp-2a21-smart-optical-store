@@ -13,11 +13,13 @@ CONFIG += c++17
 SOURCES += \
     connection.cpp \
     main.cpp \
-    gordonnance.cpp
+    gordonnance.cpp \
+    ordonnance.cpp
 
 HEADERS += \
     connection.h \
-    gordonnance.h
+    gordonnance.h \
+    ordonnance.h
 
 FORMS += \
     gordonnance.ui

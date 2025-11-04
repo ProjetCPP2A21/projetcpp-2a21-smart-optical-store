@@ -183,7 +183,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
     </column>
    </widget>
-   <widget class="QPushButton" name="quitButton">
+   <widget class="QPushButton" name="btnModifier">
     <property name="geometry">
      <rect>
       <x>1040</x>
@@ -217,7 +217,7 @@ color: rgb(51, 51, 51);</string>
      <string>CIN:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="medecinEdit">
+   <widget class="QLineEdit" name="lineEditMedecin">
     <property name="geometry">
      <rect>
       <x>1060</x>
@@ -260,7 +260,7 @@ color: rgb(51, 51, 51);</string>
      <string>Prenom:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="nomEdit">
+   <widget class="QLineEdit" name="lineEditNom">
     <property name="geometry">
      <rect>
       <x>1040</x>
@@ -316,7 +316,7 @@ color: rgb(51, 51, 51);</string>
      <string>Medecin:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="prenomEdit">
+   <widget class="QLineEdit" name="lineEditPrenom">
     <property name="geometry">
      <rect>
       <x>1050</x>
@@ -343,7 +343,7 @@ color: rgb(0, 0, 0);</string>
      <string>Ajouter une ordonnance</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="cinEdit">
+   <widget class="QLineEdit" name="lineEditCIN">
     <property name="geometry">
      <rect>
       <x>1040</x>
@@ -353,7 +353,7 @@ color: rgb(0, 0, 0);</string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="addButton">
+   <widget class="QPushButton" name="btnAjouter">
     <property name="geometry">
      <rect>
       <x>940</x>
@@ -431,6 +431,24 @@ color: rgb(51, 51, 51);</string>
     </property>
     <property name="text">
      <string>Recherche</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnSupprimer">
+    <property name="geometry">
+     <rect>
+      <x>1039</x>
+      <y>483</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);</string>
+    </property>
+    <property name="text">
+     <string>Supprimer</string>
     </property>
    </widget>
   </widget>
