@@ -22,6 +22,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTableView>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QWidget>
 
@@ -142,22 +143,22 @@ public:
     QLabel *label_46;
     QLabel *label_47;
     QLabel *label_48;
-    QPushButton *pushButton_41;
-    QLineEdit *lineEdit_16;
-    QLineEdit *lineEdit_17;
-    QLineEdit *lineEdit_18;
-    QLineEdit *lineEdit_19;
-    QLineEdit *lineEdit_20;
+    QPushButton *bajouter_f;
+    QLineEdit *id_le;
+    QLineEdit *nom_le;
+    QLineEdit *email_le;
+    QLineEdit *telephone_le;
+    QLineEdit *adresse_le;
     QLabel *label_50;
-    QLineEdit *lineEdit_22;
-    QPushButton *pushButton_45;
+    QLineEdit *cp_le;
+    QPushButton *brechercher_f;
     QGroupBox *groupBox_8;
-    QPushButton *pushButton_42;
-    QPushButton *pushButton_43;
-    QPushButton *pushButton_44;
+    QPushButton *bexporter_f;
+    QPushButton *bmodifier_f;
+    QPushButton *bsupprimer_f;
     QTableWidget *tableWidget_4;
-    QPushButton *pushButton_46;
-    QPushButton *pushButton_47;
+    QPushButton *bstatistique_f;
+    QPushButton *btrier_f;
     QLabel *label_36;
     QGroupBox *menu_4;
     QPushButton *bem_5;
@@ -165,6 +166,7 @@ public:
     QPushButton *bo_5;
     QPushButton *bp_5;
     QPushButton *bf_5;
+    QTableView *tableView;
     QWidget *page_3;
     QLineEdit *prenomEdit;
     QLabel *label_8;
@@ -222,7 +224,7 @@ public:
         page->setObjectName("page");
         stackedWidget_2 = new QStackedWidget(page);
         stackedWidget_2->setObjectName("stackedWidget_2");
-        stackedWidget_2->setGeometry(QRect(10, 10, 1500, 850));
+        stackedWidget_2->setGeometry(QRect(-30, -100, 1500, 850));
         employe = new QWidget();
         employe->setObjectName("employe");
         tab = new QGroupBox(employe);
@@ -819,44 +821,44 @@ public:
         label_48 = new QLabel(groupBox_7);
         label_48->setObjectName("label_48");
         label_48->setGeometry(QRect(20, 310, 63, 20));
-        pushButton_41 = new QPushButton(groupBox_7);
-        pushButton_41->setObjectName("pushButton_41");
-        pushButton_41->setGeometry(QRect(40, 540, 161, 41));
-        pushButton_41->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        bajouter_f = new QPushButton(groupBox_7);
+        bajouter_f->setObjectName("bajouter_f");
+        bajouter_f->setGeometry(QRect(40, 540, 161, 41));
+        bajouter_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
-        lineEdit_16 = new QLineEdit(groupBox_7);
-        lineEdit_16->setObjectName("lineEdit_16");
-        lineEdit_16->setGeometry(QRect(20, 40, 201, 24));
-        lineEdit_16->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
+        id_le = new QLineEdit(groupBox_7);
+        id_le->setObjectName("id_le");
+        id_le->setGeometry(QRect(20, 40, 201, 24));
+        id_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
 ""));
-        lineEdit_17 = new QLineEdit(groupBox_7);
-        lineEdit_17->setObjectName("lineEdit_17");
-        lineEdit_17->setGeometry(QRect(20, 110, 201, 24));
-        lineEdit_17->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        lineEdit_18 = new QLineEdit(groupBox_7);
-        lineEdit_18->setObjectName("lineEdit_18");
-        lineEdit_18->setGeometry(QRect(20, 190, 201, 24));
-        lineEdit_18->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        lineEdit_19 = new QLineEdit(groupBox_7);
-        lineEdit_19->setObjectName("lineEdit_19");
-        lineEdit_19->setGeometry(QRect(20, 270, 201, 24));
-        lineEdit_19->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        lineEdit_20 = new QLineEdit(groupBox_7);
-        lineEdit_20->setObjectName("lineEdit_20");
-        lineEdit_20->setGeometry(QRect(20, 350, 201, 24));
-        lineEdit_20->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+        nom_le = new QLineEdit(groupBox_7);
+        nom_le->setObjectName("nom_le");
+        nom_le->setGeometry(QRect(20, 110, 201, 24));
+        nom_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+        email_le = new QLineEdit(groupBox_7);
+        email_le->setObjectName("email_le");
+        email_le->setGeometry(QRect(20, 190, 201, 24));
+        email_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+        telephone_le = new QLineEdit(groupBox_7);
+        telephone_le->setObjectName("telephone_le");
+        telephone_le->setGeometry(QRect(20, 270, 201, 24));
+        telephone_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+        adresse_le = new QLineEdit(groupBox_7);
+        adresse_le->setObjectName("adresse_le");
+        adresse_le->setGeometry(QRect(20, 350, 201, 24));
+        adresse_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
         label_50 = new QLabel(groupBox_7);
         label_50->setObjectName("label_50");
         label_50->setGeometry(QRect(20, 400, 201, 20));
-        lineEdit_22 = new QLineEdit(groupBox_7);
-        lineEdit_22->setObjectName("lineEdit_22");
-        lineEdit_22->setGeometry(QRect(20, 440, 201, 24));
-        lineEdit_22->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
-        pushButton_45 = new QPushButton(fournisseur);
-        pushButton_45->setObjectName("pushButton_45");
-        pushButton_45->setGeometry(QRect(890, 130, 131, 41));
-        pushButton_45->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        cp_le = new QLineEdit(groupBox_7);
+        cp_le->setObjectName("cp_le");
+        cp_le->setGeometry(QRect(20, 440, 201, 24));
+        cp_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+        brechercher_f = new QPushButton(fournisseur);
+        brechercher_f->setObjectName("brechercher_f");
+        brechercher_f->setGeometry(QRect(890, 130, 131, 41));
+        brechercher_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         groupBox_8 = new QGroupBox(fournisseur);
@@ -864,22 +866,22 @@ public:
         groupBox_8->setGeometry(QRect(260, 200, 811, 331));
         groupBox_8->setStyleSheet(QString::fromUtf8("\n"
 "color: rgb(0, 0, 0);"));
-        pushButton_42 = new QPushButton(groupBox_8);
-        pushButton_42->setObjectName("pushButton_42");
-        pushButton_42->setGeometry(QRect(200, 250, 131, 41));
-        pushButton_42->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        bexporter_f = new QPushButton(groupBox_8);
+        bexporter_f->setObjectName("bexporter_f");
+        bexporter_f->setGeometry(QRect(180, 270, 131, 41));
+        bexporter_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
-        pushButton_43 = new QPushButton(groupBox_8);
-        pushButton_43->setObjectName("pushButton_43");
-        pushButton_43->setGeometry(QRect(370, 250, 131, 41));
-        pushButton_43->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        bmodifier_f = new QPushButton(groupBox_8);
+        bmodifier_f->setObjectName("bmodifier_f");
+        bmodifier_f->setGeometry(QRect(340, 270, 131, 41));
+        bmodifier_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
-        pushButton_44 = new QPushButton(groupBox_8);
-        pushButton_44->setObjectName("pushButton_44");
-        pushButton_44->setGeometry(QRect(520, 250, 131, 41));
-        pushButton_44->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        bsupprimer_f = new QPushButton(groupBox_8);
+        bsupprimer_f->setObjectName("bsupprimer_f");
+        bsupprimer_f->setGeometry(QRect(500, 270, 131, 41));
+        bsupprimer_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         tableWidget_4 = new QTableWidget(groupBox_8);
@@ -900,7 +902,7 @@ public:
         if (tableWidget_4->rowCount() < 3)
             tableWidget_4->setRowCount(3);
         tableWidget_4->setObjectName("tableWidget_4");
-        tableWidget_4->setGeometry(QRect(10, 40, 771, 151));
+        tableWidget_4->setGeometry(QRect(20, 40, 771, 201));
         tableWidget_4->setAcceptDrops(false);
         tableWidget_4->setStyleSheet(QString::fromUtf8("background-color: rgb(245, 245, 220);\n"
 "font: 12pt \"Segoe UI\";\n"
@@ -908,16 +910,16 @@ public:
         tableWidget_4->setGridStyle(Qt::PenStyle::DashLine);
         tableWidget_4->setCornerButtonEnabled(true);
         tableWidget_4->setRowCount(3);
-        pushButton_46 = new QPushButton(groupBox_8);
-        pushButton_46->setObjectName("pushButton_46");
-        pushButton_46->setGeometry(QRect(40, 250, 131, 41));
-        pushButton_46->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        bstatistique_f = new QPushButton(groupBox_8);
+        bstatistique_f->setObjectName("bstatistique_f");
+        bstatistique_f->setGeometry(QRect(20, 270, 131, 41));
+        bstatistique_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
-        pushButton_47 = new QPushButton(groupBox_8);
-        pushButton_47->setObjectName("pushButton_47");
-        pushButton_47->setGeometry(QRect(670, 250, 131, 41));
-        pushButton_47->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+        btrier_f = new QPushButton(groupBox_8);
+        btrier_f->setObjectName("btrier_f");
+        btrier_f->setGeometry(QRect(660, 270, 131, 41));
+        btrier_f->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         label_36 = new QLabel(fournisseur);
@@ -963,6 +965,9 @@ public:
 "color: rgb(51, 51, 51);\n"
 "font: 18pt \"Segoe UI\";\n"
 ""));
+        tableView = new QTableView(fournisseur);
+        tableView->setObjectName("tableView");
+        tableView->setGeometry(QRect(250, 570, 821, 192));
         stackedWidget_2->addWidget(fournisseur);
         page_3 = new QWidget();
         page_3->setObjectName("page_3");
@@ -1343,13 +1348,13 @@ public:
         label_46->setText(QCoreApplication::translate("gfournisseur", "Email", nullptr));
         label_47->setText(QCoreApplication::translate("gfournisseur", "T\303\251lephone", nullptr));
         label_48->setText(QCoreApplication::translate("gfournisseur", "Adresse", nullptr));
-        pushButton_41->setText(QCoreApplication::translate("gfournisseur", "\342\236\225Ajouter", nullptr));
+        bajouter_f->setText(QCoreApplication::translate("gfournisseur", "\342\236\225Ajouter", nullptr));
         label_50->setText(QCoreApplication::translate("gfournisseur", "Condition de paiement", nullptr));
-        pushButton_45->setText(QCoreApplication::translate("gfournisseur", "rechercher", nullptr));
+        brechercher_f->setText(QCoreApplication::translate("gfournisseur", "rechercher", nullptr));
         groupBox_8->setTitle(QString());
-        pushButton_42->setText(QCoreApplication::translate("gfournisseur", "Exporter", nullptr));
-        pushButton_43->setText(QCoreApplication::translate("gfournisseur", "Modifier", nullptr));
-        pushButton_44->setText(QCoreApplication::translate("gfournisseur", "Supprimer", nullptr));
+        bexporter_f->setText(QCoreApplication::translate("gfournisseur", "Exporter", nullptr));
+        bmodifier_f->setText(QCoreApplication::translate("gfournisseur", "Modifier", nullptr));
+        bsupprimer_f->setText(QCoreApplication::translate("gfournisseur", "Supprimer", nullptr));
         QTableWidgetItem *___qtablewidgetitem22 = tableWidget_4->horizontalHeaderItem(0);
         ___qtablewidgetitem22->setText(QCoreApplication::translate("gfournisseur", "Id", nullptr));
         QTableWidgetItem *___qtablewidgetitem23 = tableWidget_4->horizontalHeaderItem(1);
@@ -1361,9 +1366,9 @@ public:
         QTableWidgetItem *___qtablewidgetitem26 = tableWidget_4->horizontalHeaderItem(4);
         ___qtablewidgetitem26->setText(QCoreApplication::translate("gfournisseur", "Adresse", nullptr));
         QTableWidgetItem *___qtablewidgetitem27 = tableWidget_4->horizontalHeaderItem(5);
-        ___qtablewidgetitem27->setText(QCoreApplication::translate("gfournisseur", "Condi _ paiem", nullptr));
-        pushButton_46->setText(QCoreApplication::translate("gfournisseur", "Statistique", nullptr));
-        pushButton_47->setText(QCoreApplication::translate("gfournisseur", "Trier", nullptr));
+        ___qtablewidgetitem27->setText(QCoreApplication::translate("gfournisseur", "Condition _ paiement", nullptr));
+        bstatistique_f->setText(QCoreApplication::translate("gfournisseur", "Statistique", nullptr));
+        btrier_f->setText(QCoreApplication::translate("gfournisseur", "Trier", nullptr));
         label_36->setText(QCoreApplication::translate("gfournisseur", "Gestion Fournisseur", nullptr));
         menu_4->setTitle(QString());
         bem_5->setText(QCoreApplication::translate("gfournisseur", "employe", nullptr));

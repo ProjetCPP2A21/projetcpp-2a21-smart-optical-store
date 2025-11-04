@@ -2,16 +2,22 @@
 #define CONNECTION_H
 
 #include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QMessageBox>
-
 
 class Connection
 {
+private:
+    Connection(); // Private constructor
+    static Connection* instance;
+    QSqlDatabase db; // Persistent database connection
+
 public:
-    Connection();
+    static Connection& getInstance();
     bool createconnect();
+    void close();
+
+    // Prevent copies
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
 };
 
 #endif // CONNECTION_H

@@ -10,11 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     connection.cpp \
+    fournisseur.cpp \
     main.cpp \
     gfournisseur.cpp
 
 HEADERS += \
     connection.h \
+    fournisseur.h \
     gfournisseur.h
 
 FORMS += \

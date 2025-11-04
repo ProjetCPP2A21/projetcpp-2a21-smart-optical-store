@@ -1,29 +1,27 @@
 #include <QApplication>
 #include "gfournisseur.h"
 #include "connection.h"
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    gfournisseur w;
 
-    Connection c;
-    bool test=c.createconnect();
-    if(test)
-    {w.show();
-        QMessageBox::information(nullptr, QObject::tr("database is open"),
-                                 QObject::tr("connection successful.\n"
-                                             "Click Cancel to exit."), QMessageBox::Cancel);
-
+    // ✅ Step 1: Connect to DB using Singleton
+    if (!Connection::getInstance().createconnect()) {
+        QMessageBox::critical(nullptr, QObject::tr("Database Error"),
+                              QObject::tr("Connection to DS_optismart failed.\nClick Cancel to exit."),
+                              QMessageBox::Cancel);
+        return -1;
     }
-    else
-        QMessageBox::critical(nullptr, QObject::tr("database is not open"),
-                              QObject::tr("connection failed.\n"
-                                          "Click Cancel to exit."), QMessageBox::Cancel);
 
+    // ✅ Step 2: Show success message
+    QMessageBox::information(nullptr, QObject::tr("Database Connected"),
+                             QObject::tr("Connection to DS_optismart successful!\nClick OK to continue."),
+                             QMessageBox::Ok);
 
-
-
+    // ✅ Step 3: Create and show main window AFTER connection
+    gfournisseur w;
     w.show();
 
     return a.exec();

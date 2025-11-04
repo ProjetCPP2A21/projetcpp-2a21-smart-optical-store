@@ -27,8 +27,8 @@
      <widget class="QStackedWidget" name="stackedWidget_2">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
+        <x>-30</x>
+        <y>-100</y>
         <width>1500</width>
         <height>850</height>
        </rect>
@@ -1895,7 +1895,7 @@ color: rgb(85, 85, 127);
           <string>Adresse</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_41">
+        <widget class="QPushButton" name="bajouter_f">
          <property name="geometry">
           <rect>
            <x>40</x>
@@ -1913,7 +1913,7 @@ color: rgb(51, 51, 51);</string>
           <string>➕Ajouter</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_16">
+        <widget class="QLineEdit" name="id_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1927,7 +1927,7 @@ color: rgb(51, 51, 51);</string>
 </string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_17">
+        <widget class="QLineEdit" name="nom_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1940,7 +1940,7 @@ color: rgb(51, 51, 51);</string>
           <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_18">
+        <widget class="QLineEdit" name="email_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1953,7 +1953,7 @@ color: rgb(51, 51, 51);</string>
           <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_19">
+        <widget class="QLineEdit" name="telephone_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1966,7 +1966,7 @@ color: rgb(51, 51, 51);</string>
           <string notr="true">background-color: rgb(255, 255, 255);</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_20">
+        <widget class="QLineEdit" name="adresse_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -1992,7 +1992,7 @@ color: rgb(51, 51, 51);</string>
           <string>Condition de paiement</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="lineEdit_22">
+        <widget class="QLineEdit" name="cp_le">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -2006,7 +2006,7 @@ color: rgb(51, 51, 51);</string>
          </property>
         </widget>
        </widget>
-       <widget class="QPushButton" name="pushButton_45">
+       <widget class="QPushButton" name="brechercher_f">
         <property name="geometry">
          <rect>
           <x>890</x>
@@ -2040,11 +2040,11 @@ color: rgb(0, 0, 0);</string>
         <property name="title">
          <string/>
         </property>
-        <widget class="QPushButton" name="pushButton_42">
+        <widget class="QPushButton" name="bexporter_f">
          <property name="geometry">
           <rect>
-           <x>200</x>
-           <y>250</y>
+           <x>180</x>
+           <y>270</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -2058,11 +2058,11 @@ color: rgb(51, 51, 51);</string>
           <string>Exporter</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_43">
+        <widget class="QPushButton" name="bmodifier_f">
          <property name="geometry">
           <rect>
-           <x>370</x>
-           <y>250</y>
+           <x>340</x>
+           <y>270</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -2076,11 +2076,11 @@ color: rgb(51, 51, 51);</string>
           <string>Modifier</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_44">
+        <widget class="QPushButton" name="bsupprimer_f">
          <property name="geometry">
           <rect>
-           <x>520</x>
-           <y>250</y>
+           <x>500</x>
+           <y>270</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -2097,10 +2097,10 @@ color: rgb(51, 51, 51);</string>
         <widget class="QTableWidget" name="tableWidget_4">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>20</x>
            <y>40</y>
            <width>771</width>
-           <height>151</height>
+           <height>201</height>
           </rect>
          </property>
          <property name="acceptDrops">
@@ -2150,15 +2150,15 @@ color: rgb(0, 0, 0);</string>
          </column>
          <column>
           <property name="text">
-           <string>Condi _ paiem</string>
+           <string>Condition _ paiement</string>
           </property>
          </column>
         </widget>
-        <widget class="QPushButton" name="pushButton_46">
+        <widget class="QPushButton" name="bstatistique_f">
          <property name="geometry">
           <rect>
-           <x>40</x>
-           <y>250</y>
+           <x>20</x>
+           <y>270</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -2172,11 +2172,11 @@ color: rgb(51, 51, 51);</string>
           <string>Statistique</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_47">
+        <widget class="QPushButton" name="btrier_f">
          <property name="geometry">
           <rect>
-           <x>670</x>
-           <y>250</y>
+           <x>660</x>
+           <y>270</y>
            <width>131</width>
            <height>41</height>
           </rect>
@@ -2317,6 +2317,16 @@ font: 18pt &quot;Segoe UI&quot;;
           <string>fournisseur</string>
          </property>
         </widget>
+       </widget>
+       <widget class="QTableView" name="tableView">
+        <property name="geometry">
+         <rect>
+          <x>250</x>
+          <y>570</y>
+          <width>821</width>
+          <height>192</height>
+         </rect>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="page_3">
