@@ -18,13 +18,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>9</y>
       <width>1571</width>
-      <height>850</height>
+      <height>851</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>6</number>
     </property>
     <widget class="QWidget" name="employe">
      <widget class="QGroupBox" name="tab">
