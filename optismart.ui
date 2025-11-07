@@ -17,7 +17,7 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>0</x>
       <y>0</y>
       <width>1571</width>
       <height>850</height>
@@ -27,7 +27,7 @@
      <string notr="true">background-image: url(:/back 1.png);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="employe">
      <widget class="QGroupBox" name="tab">

@@ -12,6 +12,17 @@ optismart::optismart(QWidget *parent)
     , ui(new Ui::optismart)
 {
     ui->setupUi(this);
+    /*ui->stackedWidget->setCurrentIndex(1); // Page 1
+    connect(ui->tableWidget_c, &QTableWidget::cellClicked,
+            this, &optismart::on_tableWidget_c_cellClicked);
+    afficher_client();  // affiche automatiquement les clients à l’ouverture*/
+    connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=](int index) {
+        if (index == 1) {
+            // Appel de ta fonction d’affichage automatique
+            afficher_client();
+        }
+    });
+
 
     // ---- Initialiser la classe employe ----
     // On relie l'interface à la logique du modèle employe
