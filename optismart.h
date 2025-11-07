@@ -8,6 +8,7 @@
 #include<QSqlQueryModel>
 #include <QWidget>
 #include "ui_optismart.h"
+#include "produit.h"
 
 
 
@@ -35,8 +36,19 @@ private slots:
 private slots:
     void on_tableWidget_c_cellClicked(int row, int column);
     void on_bmodifier_c_clicked();
+    // produit
+    void on_ajouterButton_clicked();
+    void on_supprimerButton_clicked();
+    void on_modifierButton_clicked();
+    void on_tableWidget_p_2_doubleClicked(const QModelIndex &index);
+    void on_searchButton_clicked();
+    void on_exportPdfButton_clicked();
+    void on_statsButton_clicked();
+    void on_trierButton_clicked();
 private:
     Ui::optismart *ui;
+    produit Ptmp;
+    int selectedIdProduit;
 };
 
 #endif // OPTISMART_H
