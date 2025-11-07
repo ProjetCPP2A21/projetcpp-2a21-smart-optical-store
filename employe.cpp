@@ -47,12 +47,12 @@ employe::employe(Ui::optismart *ui, QObject *parent)
         if (this->ajouter())
             this->afficherDansTable();
     });
-    QObject::connect(ui->bretour_stats_e, &QPushButton::clicked, this, [this]() {
+    /*QObject::connect(ui->bretour_stats_e, &QPushButton::clicked, this, [this]() {
         this->retourstats_e();
     });
     QObject::connect(ui->bquitter_e, &QPushButton::clicked, this, [this]() {
         this->quitter();
-    });
+    });*/
 
 
 
@@ -328,7 +328,7 @@ bool employe::exporterPdf(const QString &fichier)
 void employe::afficherStatistiques()
 {
     // si tu veux toujours naviguer vers la page stats
-    ui->stackedWidget->setCurrentWidget(ui->stats_e);
+    /*ui->stackedWidget->setCurrentWidget(ui->stats_e);*/
 
     // 1) Récupérer les données
     QSqlQuery query;
@@ -366,23 +366,23 @@ void employe::afficherStatistiques()
     chartView->setRenderHint(QPainter::Antialiasing);
 
     // 4) Injecter dans le QGroupBox (au lieu de stats_e directement)
-    QGroupBox *box = ui->groupBox_stats; // 🔁 remplace par le nom exact si différent
+   /* QGroupBox *box = ui->groupBox_stats; // 🔁 remplace par le nom exact si différent*/
 
     // Nettoyer l'ancien contenu/layout du groupbox
-    if (QLayout *old = box->layout()) {
+    /*if (QLayout *old = box->layout()) {
         QLayoutItem *it;
         while ((it = old->takeAt(0)) != nullptr) {
             if (QWidget *w = it->widget()) w->deleteLater();
             delete it;
         }
         delete old;
-    }
+    }*/
 
     // Nouveau layout pour le groupbox
     auto *layout = new QVBoxLayout();
     layout->setContentsMargins(8, 8, 8, 8);
     layout->setSpacing(8);
     layout->addWidget(chartView);
-    box->setLayout(layout);
+    /*box->setLayout(layout);*/
 }
 

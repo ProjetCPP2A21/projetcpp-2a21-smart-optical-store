@@ -43,7 +43,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    resoures.qrc
+    ressources.qrc
 
 DISTFILES += \
     ../GEmployev0/logo1.png

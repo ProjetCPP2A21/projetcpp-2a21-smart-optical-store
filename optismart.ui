@@ -17,11 +17,14 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>20</x>
+      <y>0</y>
       <width>1571</width>
       <height>850</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/back 1.png);</string>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -327,9 +330,9 @@ font: 11pt &quot;Segoe UI&quot;;</string>
       <widget class="QLabel" name="label_4">
        <property name="geometry">
         <rect>
-         <x>12</x>
+         <x>20</x>
          <y>260</y>
-         <width>71</width>
+         <width>63</width>
          <height>20</height>
         </rect>
        </property>
@@ -338,7 +341,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 color: rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>Prénom:</string>
+        <string>Prénon:</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_3">
@@ -504,7 +507,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 color: rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>Login</string>
+        <string>Poste</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="linepassword_e">
@@ -548,8 +551,8 @@ color: rgb(0, 0, 0);</string>
      <widget class="QGroupBox" name="menu">
       <property name="geometry">
        <rect>
-        <x>-10</x>
-        <y>-20</y>
+        <x>-20</x>
+        <y>-10</y>
         <width>231</width>
         <height>851</height>
        </rect>
@@ -670,7 +673,7 @@ font: 18pt &quot;Segoe UI&quot;;
         <string>fournisseur</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="bquitter_e">
+      <widget class="QPushButton" name="benregistrer_e_8">
        <property name="geometry">
         <rect>
          <x>80</x>
@@ -1000,10 +1003,10 @@ color: rgb(0, 0, 0);</string>
      <widget class="QGroupBox" name="groupBox_3">
       <property name="geometry">
        <rect>
-        <x>1140</x>
+        <x>1120</x>
         <y>140</y>
         <width>351</width>
-        <height>571</height>
+        <height>641</height>
        </rect>
       </property>
       <property name="title">
@@ -1162,7 +1165,7 @@ color: rgb(0, 0, 0);</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir l'identifiant...</string>
+        <string/>
        </property>
       </widget>
       <widget class="QLineEdit" name="linenom_c">
@@ -1179,10 +1182,10 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir le nom...</string>
+        <string/>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineprenon_c">
+      <widget class="QLineEdit" name="lineprenom_c">
        <property name="geometry">
         <rect>
          <x>100</x>
@@ -1196,7 +1199,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir le prenon...</string>
+        <string/>
        </property>
       </widget>
       <widget class="QLineEdit" name="linetel_c">
@@ -1213,7 +1216,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir le numero de tel...</string>
+        <string/>
        </property>
       </widget>
       <widget class="QLineEdit" name="lineemail_c">
@@ -1230,7 +1233,7 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir le email...</string>
+        <string/>
        </property>
       </widget>
       <widget class="QLineEdit" name="linepoints_c">
@@ -1247,14 +1250,14 @@ font: 11pt &quot;Segoe UI&quot;;</string>
 font: 11pt &quot;Segoe UI&quot;;</string>
        </property>
        <property name="text">
-        <string>Saisir Points de fidélité....</string>
+        <string/>
        </property>
       </widget>
       <widget class="QPushButton" name="benregistrer_c">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>510</y>
+         <y>580</y>
          <width>161</width>
          <height>41</height>
         </rect>
@@ -1272,7 +1275,7 @@ color: rgb(51, 51, 51);</string>
        <property name="geometry">
         <rect>
          <x>180</x>
-         <y>510</y>
+         <y>580</y>
          <width>161</width>
          <height>41</height>
         </rect>
@@ -1284,6 +1287,76 @@ color: rgb(51, 51, 51);</string>
        </property>
        <property name="text">
         <string>✖Annuler </string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="non_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>470</y>
+         <width>81</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 11pt &quot;Segoe UI&quot;;
+color: rgb(0, 0, 0);
+</string>
+       </property>
+       <property name="text">
+        <string>Date_nais:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="non_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>510</y>
+         <width>91</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 11pt &quot;Segoe UI&quot;;
+color: rgb(0, 0, 0);
+</string>
+       </property>
+       <property name="text">
+        <string>Date_inscri:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="linedate_inscri_c">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>520</y>
+         <width>221</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(102, 102, 102);
+font: 11pt &quot;Segoe UI&quot;;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="linedate_nais_c">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>470</y>
+         <width>221</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(102, 102, 102);
+font: 11pt &quot;Segoe UI&quot;;</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </widget>
@@ -3460,39 +3533,6 @@ color: rgb(0, 0, 0);</string>
         <string>Se connecter</string>
        </property>
       </widget>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="stats_e">
-     <widget class="QGroupBox" name="groupBox_stats">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>110</y>
-        <width>1301</width>
-        <height>671</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>GroupBox</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="bretour_stats_e">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>161</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(168, 213, 186);
-font: 14pt &quot;Segoe UI&quot;;
-color: rgb(51, 51, 51);</string>
-      </property>
-      <property name="text">
-       <string>retour</string>
-      </property>
      </widget>
     </widget>
    </widget>
