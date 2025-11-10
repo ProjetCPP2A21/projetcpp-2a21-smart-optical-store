@@ -9,36 +9,36 @@ class fournisseur
 {
 public:
     fournisseur();
-    fournisseur(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement);
+    fournisseur(QString id_fournisseur, QString nom, QString adresse, QString email, QString numero_telephone, QString condition_paiement);
 
     // Méthodes
     void afficher(QTableWidget *tableWidget);
     bool ajouter();
-    bool supprimer(QString id);
-    bool modifier(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement);  // ⭐ NOUVELLE MÉTHODE
+    bool supprimer(QString id_fournisseur);
+    bool modifier(QString id_fournisseur, QString nom, QString adresse, QString email, QString numero_telephone, QString condition_paiement);
 
     // Getters
-    QString getID() const { return id; }
+    QString getIDFournisseur() const { return id_fournisseur; }
     QString getNom() const { return nom; }
     QString getAdresse() const { return adresse; }
     QString getEmail() const { return email; }
-    QString getTelephone() const { return telephone; }
+    QString getNumeroTelephone() const { return numero_telephone; }
     QString getConditionPaiement() const { return condition_paiement; }
 
     // Setters
-    void setID(QString id) { this->id = id; }
+    void setIDFournisseur(QString id_fournisseur) { this->id_fournisseur = id_fournisseur; }
     void setNom(QString nom) { this->nom = nom; }
     void setAdresse(QString adresse) { this->adresse = adresse; }
     void setEmail(QString email) { this->email = email; }
-    void setTelephone(QString telephone) { this->telephone = telephone; }
+    void setNumeroTelephone(QString numero_telephone) { this->numero_telephone = numero_telephone; }
     void setConditionPaiement(QString condition_paiement) { this->condition_paiement = condition_paiement; }
 
 private:
-    QString id;
+    QString id_fournisseur;
     QString nom;
     QString adresse;
     QString email;
-    QString telephone;
+    QString numero_telephone;
     QString condition_paiement;
 };
 

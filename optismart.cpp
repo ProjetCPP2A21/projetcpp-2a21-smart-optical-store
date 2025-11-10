@@ -10,20 +10,38 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QIntValidator>
-
+#include <QRegularExpression>  // ⭐ AJOUT en haut du fichier
 optismart::optismart(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::optismart)
+    , cinSelectionne("")  // ⭐ INITIALISATION
 {
     ui->setupUi(this);
+
+    QRegularExpression regexCIN("[0-9]{1,8}");
+    QRegularExpressionValidator *validatorCIN = new QRegularExpressionValidator(regexCIN, this);
+    ui->linecin_o->setValidator(validatorCIN);
+    ui->linecin_o->setPlaceholderText("8 chiffres maximum");
+
+    // Validateur pour nom, prénom, médecin (lettres seulement)
+    QRegularExpression regexLettres("^[a-zA-ZÀ-ÿ\\s\\-']*$");
+    QRegularExpressionValidator *validatorLettres = new QRegularExpressionValidator(regexLettres, this);
+
+    ui->linenom_o->setValidator(validatorLettres);
+    ui->lineprenom_o->setValidator(validatorLettres);
+    ui->linemedecin_o->setValidator(validatorLettres);
+
+
+
+    // Configuration de la date pour ordonnance
+    ui->linedate_o->setDate(QDate::currentDate());
+
     connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=](int index) {
         if (index == 1) {
-            // Appel de ta fonction d’affichage automatique
+            // Appel de ta fonction d'affichage automatique
             afficher_client();
         }
-    }
-            );
-
+    });
 
     // ---- Initialiser la classe employe ----
     // On relie l'interface à la logique du modèle employe
@@ -79,10 +97,8 @@ optismart::optismart(QWidget *parent)
     connect(ui->bp_6, &QPushButton::clicked, this, [=]() { setPage(2); });
     connect(ui->bf_6, &QPushButton::clicked, this, [=]() { setPage(3); });
     connect(ui->bo_6, &QPushButton::clicked, this, [=]() { setPage(4); });
-
-
-    /*ui->stackedWidget->setCurrentIndex(5);*/
 }
+
 //------------------------------fournisseur-------------------------------
 void optismart::actualiserAffichage()
 {
@@ -306,6 +322,7 @@ void optismart::on_bmodifier_f_clicked()
         qDebug() << "❌ Modification annulée par l'utilisateur";
     }
 }
+
 //------------------------------client------------------------------------
 void optismart::on_bajouter_c_clicked()
 {
@@ -430,10 +447,7 @@ void optismart::on_bsupprimer_c_clicked()
     } else {
         QMessageBox::critical(this, "Erreur", "❌ Suppression non effectuée.");
     }
-
-
 }
-
 
 void optismart::afficher_client(int id_selectionne)
 {
@@ -472,8 +486,6 @@ void optismart::afficher_client(int id_selectionne)
         ui->tableWidget_c->selectRow(ligne_selection);
 }
 
-
-
 void optismart::on_tableWidget_c_cellClicked(int row, int column)
 {
     Q_UNUSED(column);
@@ -499,7 +511,6 @@ void optismart::on_tableWidget_c_cellClicked(int row, int column)
     ui->linedate_inscri_c->setText(ui->tableWidget_c->item(row,6)->text());
     ui->linepoints_c->setText(ui->tableWidget_c->item(row,7)->text());
 }
-
 
 void optismart::on_bmodifier_c_clicked()
 {
@@ -534,6 +545,7 @@ void optismart::on_bmodifier_c_clicked()
         QMessageBox::critical(this, "Erreur", "❌ Modification non effectuée.");
     }
 }
+
 void optismart::on_ajouterButton_clicked()
 {
     QString type = ui->typeEdit->text();
@@ -620,7 +632,7 @@ void optismart::on_ajouterButton_clicked()
     }
     else
     {
-        QMessageBox::critical(this, tr("Erreur"), tr("Échec de l’ajout du produit ❌"));
+        QMessageBox::critical(this, tr("Erreur"), tr("Échec de l'ajout du produit ❌"));
     }
 }
 
@@ -873,6 +885,212 @@ void optismart::on_exportPdfButton_clicked()
 
     QMessageBox::information(this, tr("Succès"), tr("Exportation en PDF réussie ! Fichier sauvegardé : %1").arg(fileName));
 }
+
+// ⭐ AJOUT: FONCTIONS POUR ORDONNANCE
+
+void optismart::actualiserAffichageOrdonnance()
+{
+    if (ui->tableWidget_o) {
+        ord.afficherOrdonnance(ui->tableWidget_o);
+    }
+}
+
+// ⭐ AJOUT: Fonction de validation du CIN
+// ⭐ AJOUT: Fonction de validation du CIN
+bool optismart::validerCIN(const QString& cin)
+{
+    if (cin.isEmpty()) {
+        QMessageBox::warning(this, "Champ manquant", "Le CIN est obligatoire!");
+        return false;
+    }
+
+    if (cin.length() > 8) {
+        QMessageBox::warning(this, "CIN invalide", "Le CIN ne doit pas dépasser 8 chiffres!");
+        return false;
+    }
+
+    // ⭐ CORRECTION: Utiliser QRegularExpression au lieu de QRegExp
+    QRegularExpression digitRegex("^[0-9]+$");
+    if (!digitRegex.match(cin).hasMatch()) {
+        QMessageBox::warning(this, "CIN invalide", "Le CIN doit contenir uniquement des chiffres!");
+        return false;
+    }
+
+    return true;
+}
+// ⭐ AJOUT: Fonction de validation pour nom, prénom et médecin
+bool optismart::validerNomPrenom(const QString& texte, const QString& champ)
+{
+    if (texte.isEmpty()) {
+        QMessageBox::warning(this, "Champ manquant", "Le " + champ + " est obligatoire!");
+        return false;
+    }
+
+    // Vérification que ce ne sont que des lettres, espaces et traits d'union
+    QRegularExpression lettreRegex("^[a-zA-ZÀ-ÿ\\s\\-']+$");
+    if (!lettreRegex.match(texte).hasMatch()) {
+        QMessageBox::warning(this, champ + " invalide",
+                             "Le " + champ + " doit contenir uniquement des lettres, espaces, traits d'union et apostrophes!");
+        return false;
+    }
+
+    // Vérification de la longueur raisonnable
+    if (texte.length() > 50) {
+        QMessageBox::warning(this, champ + " trop long",
+                             "Le " + champ + " ne doit pas dépasser 50 caractères!");
+        return false;
+    }
+
+    return true;
+}
+
+void optismart::on_bajouter_o_clicked()
+{
+    // Récupération des informations saisies
+    QString cin = ui->linecin_o->text();
+    QString nom = ui->linenom_o->text();
+    QString prenom = ui->lineprenom_o->text();
+    QString medecin = ui->linemedecin_o->text();
+    QDate date = ui->linedate_o->date();
+
+    // ⭐ AJOUT: Validation spécifique du CIN
+    if (!validerCIN(cin)) {
+        return;
+    }
+
+    // Validation des autres champs obligatoires
+    if (nom.isEmpty() || prenom.isEmpty() || medecin.isEmpty()) {
+        QMessageBox::warning(this, "Champs manquants",
+                             "Veuillez remplir tous les champs obligatoires!");
+        return;
+    }
+
+    // Créer et ajouter l'ordonnance
+    Ordonnance nouvelleOrdonnance(cin, nom, prenom, medecin, date);
+    bool test = nouvelleOrdonnance.ajouterOrdonnance();
+
+    if (test) {
+        actualiserAffichageOrdonnance();
+        // Vider les champs
+        ui->linecin_o->clear();
+        ui->linenom_o->clear();
+        ui->lineprenom_o->clear();
+        ui->linemedecin_o->clear();
+        ui->linedate_o->setDate(QDate::currentDate());
+        QMessageBox::information(this, "Succès", "Ordonnance ajoutée avec succès!");
+    } else {
+        QMessageBox::critical(this, "Erreur", "Erreur lors de l'ajout de l'ordonnance!");
+    }
+}
+
+void optismart::on_bsupprimer_o_clicked()
+{
+    QString cin = ui->linecin_o->text();
+
+    if (cin.isEmpty()) {
+        QMessageBox::warning(this, "Champ manquant",
+                             "Veuillez saisir le CIN de l'ordonnance à supprimer!");
+        return;
+    }
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation",
+                                  "Supprimer l'ordonnance avec CIN: " + cin + "?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        bool test = ord.supprimerOrdonnance(cin);
+        if (test) {
+            actualiserAffichageOrdonnance();
+            // Vider les champs
+            ui->linecin_o->clear();
+            ui->linenom_o->clear();
+            ui->lineprenom_o->clear();
+            ui->linemedecin_o->clear();
+            ui->linedate_o->setDate(QDate::currentDate());
+            QMessageBox::information(this, "Succès", "Ordonnance supprimée avec succès!");
+        } else {
+            QMessageBox::critical(this, "Erreur", "Erreur lors de la suppression!");
+        }
+    }
+}
+
+void optismart::on_bmodifier_o_clicked()
+{
+    if (cinSelectionne.isEmpty()) {
+        QMessageBox::warning(this, "Aucune sélection",
+                             "Veuillez sélectionner une ordonnance dans le tableau!");
+        return;
+    }
+
+    QString nouveauCIN = ui->linecin_o->text();
+    QString nom = ui->linenom_o->text();
+    QString prenom = ui->lineprenom_o->text();
+    QString medecin = ui->linemedecin_o->text();
+    QDate date = ui->linedate_o->date();
+
+    // ⭐ AJOUT: Validation spécifique du CIN pour la modification
+    if (!validerCIN(nouveauCIN)) {
+        return;
+    }
+
+    // Validation des autres champs obligatoires
+    if (nom.isEmpty() || prenom.isEmpty() || medecin.isEmpty()) {
+        QMessageBox::warning(this, "Champs manquants",
+                             "Veuillez remplir tous les champs obligatoires!");
+        return;
+    }
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation",
+                                  "Modifier l'ordonnance avec CIN: " + cinSelectionne + "?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        Ordonnance ordonnanceModifiee(nouveauCIN, nom, prenom, medecin, date);
+        bool test = ordonnanceModifiee.modifierOrdonnance(cinSelectionne);
+
+        if (test) {
+            actualiserAffichageOrdonnance();
+            // Vider les champs et réinitialiser
+            ui->linecin_o->clear();
+            ui->linenom_o->clear();
+            ui->lineprenom_o->clear();
+            ui->linemedecin_o->clear();
+            ui->linedate_o->setDate(QDate::currentDate());
+            cinSelectionne = "";
+            QMessageBox::information(this, "Succès", "Ordonnance modifiée avec succès!");
+        } else {
+            QMessageBox::critical(this, "Erreur", "Erreur lors de la modification!");
+        }
+    }
+}
+
+void optismart::on_bactualiser_o_clicked()
+{
+    actualiserAffichageOrdonnance();
+    QMessageBox::information(this, "Actualisation", "Liste des ordonnances actualisée!");
+}
+
+void optismart::on_tableWidget_o_clicked(const QModelIndex &index)
+{
+    int row = index.row();
+
+    // Remplir les champs avec les données sélectionnées
+    ui->linecin_o->setText(ui->tableWidget_o->item(row, 0)->text());
+    ui->linenom_o->setText(ui->tableWidget_o->item(row, 1)->text());
+    ui->lineprenom_o->setText(ui->tableWidget_o->item(row, 2)->text());
+    ui->linemedecin_o->setText(ui->tableWidget_o->item(row, 3)->text());
+
+    // Convertir et afficher la date
+    QString dateStr = ui->tableWidget_o->item(row, 4)->text();
+    QDate date = QDate::fromString(dateStr, "dd-MM-yy");
+    ui->linedate_o->setDate(date);
+
+    // Stocker le CIN sélectionné
+    cinSelectionne = ui->tableWidget_o->item(row, 0)->text();
+}
+
 void optismart::on_statsButton_clicked()
 {
     QSqlQuery query;
@@ -950,6 +1168,7 @@ void optismart::on_statsButton_clicked()
     ui->statcanvas->resizeColumnsToContents();
     ui->statcanvas->resizeRowsToContents();
 }
+
 void optismart::on_trierButton_clicked()
 {
     // ÉTAPE 1 : Recharge toutes les données du tableau
@@ -958,8 +1177,8 @@ void optismart::on_trierButton_clicked()
     // ÉTAPE 2 : Trie les lignes par la colonne "type" (colonne 1)
     ui->tableWidget_p_2->sortByColumn(1, Qt::AscendingOrder);
 }
+
 optismart::~optismart()
 {
     delete ui;
 }
-

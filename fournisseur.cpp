@@ -8,13 +8,13 @@
 
 fournisseur::fournisseur() {}
 
-fournisseur::fournisseur(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement)
+fournisseur::fournisseur(QString id_fournisseur, QString nom, QString adresse, QString email, QString numero_telephone, QString condition_paiement)
 {
-    this->id = id;
+    this->id_fournisseur = id_fournisseur;
     this->nom = nom;
     this->adresse = adresse;
     this->email = email;
-    this->telephone = telephone;
+    this->numero_telephone = numero_telephone;
     this->condition_paiement = condition_paiement;
 }
 
@@ -32,7 +32,7 @@ void fournisseur::afficher(QTableWidget *tableWidget)
 
     // Définir les en-têtes de colonnes
     QStringList headers;
-    headers << "ID Fournisseur" << "Nom" << "Adresse" << "Email" << "Téléphone" << "Condition Paiement";
+    headers << "ID Fournisseur" << "Nom" << "Adresse" << "Email" << "Numéro Téléphone" << "Condition Paiement";
     tableWidget->setColumnCount(6);
     tableWidget->setHorizontalHeaderLabels(headers);
 
@@ -63,15 +63,15 @@ bool fournisseur::ajouter()
     QSqlQuery query;
 
     // Requête préparée pour éviter les injections SQL
-    query.prepare("INSERT INTO FOURNISSEUR (ID_FOURNISSEUR, NOM, ADRESSE, EMAIL, TELEPHONE, CONDITION_DE_PAIEMENT) "
-                  "VALUES (:id, :nom, :adresse, :email, :telephone, :condition_paiement)");
+    query.prepare("INSERT INTO FOURNISSEUR (ID_FOURNISSEUR, NOM, ADRESSE, EMAIL, NUMERO_TELEPHONE, CONDITION_PAIEMENT) "
+                  "VALUES (:id_fournisseur, :nom, :adresse, :email, :numero_telephone, :condition_paiement)");
 
     // Liaison des valeurs
-    query.bindValue(":id", id);
+    query.bindValue(":id_fournisseur", id_fournisseur);
     query.bindValue(":nom", nom);
     query.bindValue(":adresse", adresse);
     query.bindValue(":email", email);
-    query.bindValue(":telephone", telephone);
+    query.bindValue(":numero_telephone", numero_telephone);
     query.bindValue(":condition_paiement", condition_paiement);
 
     // Exécution de la requête
@@ -84,17 +84,17 @@ bool fournisseur::ajouter()
     }
 }
 
-bool fournisseur::supprimer(QString id)
+bool fournisseur::supprimer(QString id_fournisseur)
 {
     QSqlQuery query;
 
     // Requête préparée pour supprimer par ID
-    query.prepare("DELETE FROM FOURNISSEUR WHERE ID_FOURNISSEUR = :id");
-    query.bindValue(":id", id);
+    query.prepare("DELETE FROM FOURNISSEUR WHERE ID_FOURNISSEUR = :id_fournisseur");
+    query.bindValue(":id_fournisseur", id_fournisseur);
 
     // Exécution de la requête
     if (query.exec()) {
-        qDebug() << "✅ Fournisseur avec ID" << id << "supprimé avec succès!";
+        qDebug() << "✅ Fournisseur avec ID" << id_fournisseur << "supprimé avec succès!";
         return true;
     } else {
         qDebug() << "❌ Erreur lors de la suppression:" << query.lastError().text();
@@ -102,8 +102,7 @@ bool fournisseur::supprimer(QString id)
     }
 }
 
-// ⭐ NOUVELLE MÉTHODE: Modifier un fournisseur
-bool fournisseur::modifier(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement)
+bool fournisseur::modifier(QString id_fournisseur, QString nom, QString adresse, QString email, QString numero_telephone, QString condition_paiement)
 {
     QSqlQuery query;
 
@@ -112,21 +111,21 @@ bool fournisseur::modifier(QString id, QString nom, QString adresse, QString ema
                   "NOM = :nom, "
                   "ADRESSE = :adresse, "
                   "EMAIL = :email, "
-                  "TELEPHONE = :telephone, "
-                  "CONDITION_DE_PAIEMENT = :condition_paiement "
-                  "WHERE ID_FOURNISSEUR = :id");
+                  "NUMERO_TELEPHONE = :numero_telephone, "
+                  "CONDITION_PAIEMENT = :condition_paiement "
+                  "WHERE ID_FOURNISSEUR = :id_fournisseur");
 
     // Liaison des valeurs
-    query.bindValue(":id", id);
+    query.bindValue(":id_fournisseur", id_fournisseur);
     query.bindValue(":nom", nom);
     query.bindValue(":adresse", adresse);
     query.bindValue(":email", email);
-    query.bindValue(":telephone", telephone);
+    query.bindValue(":numero_telephone", numero_telephone);
     query.bindValue(":condition_paiement", condition_paiement);
 
     // Exécution de la requête
     if (query.exec()) {
-        qDebug() << "✅ Fournisseur avec ID" << id << "modifié avec succès!";
+        qDebug() << "✅ Fournisseur avec ID" << id_fournisseur << "modifié avec succès!";
         return true;
     } else {
         qDebug() << "❌ Erreur lors de la modification:" << query.lastError().text();
