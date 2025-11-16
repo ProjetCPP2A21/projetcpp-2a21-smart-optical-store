@@ -18,6 +18,8 @@ class gproduit : public QMainWindow
 public:
     gproduit(QWidget *parent = nullptr);
     ~gproduit();
+       void refreshTable();
+
 
 private slots:
     void on_ajouterButton_clicked();
@@ -27,13 +29,18 @@ private slots:
     void on_searchButton_clicked();
     void on_exportPdfButton_clicked();
     void on_statsButton_clicked();
-    void on_trierButton_clicked();    // ← ICI
+    void on_trierButton_clicked();
+    void on_genererQrButton_clicked();  // NOUVEAU SLOT
 
+
+
+    // gproduit.h
 private:
     Ui::gproduit *ui;
-    produit Ptmp;
-    int selectedIdProduit;
+    produit Ptmp;                    // D'ABORD Ptmp
+    int selectedIdProduit = -1;      // ENSUITE selectedIdProduit
 
 };
+
 
 #endif // GPRODUIT_H

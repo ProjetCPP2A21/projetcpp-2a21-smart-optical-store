@@ -1,6 +1,7 @@
 #include "produit.h"
 #include <QSqlQuery>
 #include <QtDebug>
+#include <QSqlError>
 
 produit::produit()
 {
@@ -74,7 +75,22 @@ bool produit::modifier()
 QSqlQueryModel* produit::afficher()
 {
     QSqlQueryModel* model = new QSqlQueryModel();
+
+    // TOUT SÉLECTIONNER
     model->setQuery("SELECT * FROM produit");
+
+    // TOUS LES TITRES EN FRANÇAIS
+    model->setHeaderData(0, Qt::Horizontal, tr("ID Produit"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Type"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Quantité"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Prix"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Couleur"));
+    model->setHeaderData(5, Qt::Horizontal, tr("Épaisseur"));
+    model->setHeaderData(6, Qt::Horizontal, tr("Diamètre"));
+    model->setHeaderData(7, Qt::Horizontal, tr("ID Client"));
+    model->setHeaderData(8, Qt::Horizontal, tr("ID Employé"));
+    model->setHeaderData(9, Qt::Horizontal, tr("ID Fournisseur"));
+
     return model;
 }
 QSqlQueryModel* produit::trier() {
@@ -90,4 +106,12 @@ QSqlQueryModel* produit::rechercher() {
     q.exec();
     model->setQuery(q);
     return model;
+}
+
+int produit::getLastInsertedId()
+{
+    QSqlQuery q;
+    q.exec("SELECT last_insert_rowid()");
+    if (q.next()) return q.value(0).toInt();
+    return -1;
 }

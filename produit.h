@@ -58,6 +58,7 @@ public:
     bool modifier();
     QSqlQueryModel* trier();
     QSqlQueryModel* rechercher();
+    int getLastInsertedId();  // NOUVEAU
 };
 
 #endif // PRODUIT_H
