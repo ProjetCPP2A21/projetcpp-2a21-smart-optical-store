@@ -29,6 +29,15 @@ private slots:
  private slots:
      void on_tableWidget_c_cellClicked(int row, int column);
      void on_bmodifier_c_clicked();
+ private slots:
+     void on_brechercher_c_clicked();
+     void on_btrier_c_clicked();
+     void on_bexporter_c_clicked();
+ private slots:
+     void on_bstatistique_c_clicked();
+     void afficherStatistiques_client();
+     /*void on_bstatistique_c_clicked();*/
+
 
 
 private:

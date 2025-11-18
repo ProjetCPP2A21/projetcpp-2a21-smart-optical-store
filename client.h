@@ -50,9 +50,10 @@ public:
     bool modifier_client(int id_client, QString nom, QString prenom, QString date_naissance,QString email, int num_tel, QString date_inscri, int point_fedelite);
 
     QSqlQueryModel * trier_client ();
-    QSqlQueryModel * rechercher_client ();
-    bool exporter_client();
+    QSqlQueryModel * rechercher_client (int id);
+    bool exporter_client_pdf(const QString &fichier = QString());
     void retour_client();
+    void afficherStatistiques_client();
 
 
 };

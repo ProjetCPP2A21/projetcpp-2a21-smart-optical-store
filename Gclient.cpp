@@ -3,13 +3,35 @@
 #include <QMessageBox>
 #include "client.h"
 #include "connection.h"
+#include <QFileDialog>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QChart>
+#include <QVBoxLayout>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QMessageBox>
+#include <QDate>
+//pour stat
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QtCharts/QChart>
+#include <QSqlQuery>
+#include <QDate>
+#include <QPixmap>
+#include <QPainter>
 Gclient::Gclient(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Gclient)
 {
     ui->setupUi(this);
-    connect(ui->tableWidget_c, &QTableWidget::cellClicked,
-            this, &Gclient::on_tableWidget_c_cellClicked);
+    //stat
+    /*QFont font("MS Serif", 9);
+    font.setStyle(QFont::StyleNormal);
+    ui->afficestat_c->setFont(font);
+    connect(ui->tableWidget_c, &QTablechartContainer::cellClicked,
+            this, &Gclient::on_tableWidget_c_cellClicked);*/
 
 
     // 🔹 Créer la connexion
@@ -292,4 +314,478 @@ void Gclient::on_bmodifier_c_clicked()
         QMessageBox::critical(this, "Erreur", "❌ Modification non effectuée.");
     }
 }
+void Gclient::on_brechercher_c_clicked()
+{
+    bool ok;
+    int id = ui->lineEdit_recherche_c->text().toInt(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Erreur", "Veuillez entrer un ID valide !");
+        return;
+    }
+
+    client c;
+    QSqlQueryModel *model = c.rechercher_client(id);
+
+    if (model->rowCount() == 0) {
+        QMessageBox::information(this, "Résultat", "❌Aucun client trouvé !");
+        return;
+    }
+    else{
+        QMessageBox::information(this, "Résultat", "✅ Client trouvé !");
+        return;
+    }
+    afficher_client();
+}
+void Gclient::on_btrier_c_clicked()
+{
+    client c;
+    QSqlQueryModel *model = c.trier_client();
+
+    ui->tableWidget_c->setRowCount(0);
+    for (int i = 0; i < model->rowCount(); i++) {
+        ui->tableWidget_c->insertRow(i);
+        for (int j = 0; j < model->columnCount(); j++) {
+            ui->tableWidget_c->setItem(i, j, new QTableWidgetItem(model->data(model->index(i, j)).toString()));
+        }
+    }
+}
+/*void Gclient::on_bexporter_c_clicked()
+{
+    client c;
+    if (c.exporter_client_pdf()) {
+        QMessageBox::information(this, "Exportation réussie", "✅ Le fichier clients.pdf a été généré avec succès !");
+    } else {
+        QMessageBox::critical(this, "Erreur", "❌ Impossible de générer le PDF.");
+    }
+}*/
+void Gclient::on_bexporter_c_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Enregistrer le PDF", "", "PDF Files (*.pdf)");
+    if (!fileName.isEmpty()) {
+        client c;
+        c.exporter_client_pdf(fileName);
+    }
+}
+// Dans Gclient.cpp
+/*void Gclient::afficherStatistiques_client()
+{
+    QSqlQuery query;
+    if (!query.exec("SELECT TO_CHAR(TO_DATE(date_inscri, 'YYYY-MM-DD'), 'YYYY-MM') AS mois, COUNT(*) "
+                     "FROM client GROUP BY TO_CHAR(TO_DATE(date_inscri, 'YYYY-MM-DD'), 'YYYY-MM')"))
+
+    {
+        QMessageBox::critical(this, "Erreur SQL", query.lastError().text());
+        return;
+    }
+
+    QPieSeries *series = new QPieSeries();
+    while(query.next())
+    {
+        QString mois = query.value(0).toString();
+        int count = query.value(1).toInt();
+        series->append(QString("%1 (%2)").arg(mois).arg(count), count);
+    }
+
+    if(series->isEmpty())
+    {
+        QMessageBox::information(this, "Statistiques", "Aucune donnée à afficher !");
+        series->deleteLater();
+        return;
+    }
+
+    for(auto slice : series->slices())
+        slice->setLabelVisible(true);
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients par date d'inscription");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QChartView chartView(chart);
+    chartView.setRenderHint(QPainter::Antialiasing);
+
+    // Pixmap pour mettre dans le QLabel
+    QPixmap pix(ui->afficestat_c->size());
+    pix.fill(Qt::transparent);
+    QPainter painter(&pix);
+    chartView.resize(ui->afficestat_c->size());
+    chartView.render(&painter);
+
+    ui->afficestat_c->setPixmap(pix);
+}*/
+
+/*void Gclient::afficherStatistiques_client()
+{
+    QSqlQuery query;
+    QString sql = R"(
+        SELECT
+            CASE
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) < 20 THEN '<20'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 20 AND 29 THEN '20-29'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 30 AND 39 THEN '30-39'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 40 AND 49 THEN '40-49'
+                ELSE '50+'
+            END AS tranche_age,
+            COUNT(*) AS nb_clients
+        FROM client
+        WHERE REGEXP_LIKE(date_naissance, '^\d{2}/\d{2}/\d{4}$')
+        GROUP BY
+            CASE
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) < 20 THEN '<20'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 20 AND 29 THEN '20-29'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 30 AND 39 THEN '30-39'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 40 AND 49 THEN '40-49'
+                ELSE '50+'
+            END
+        ORDER BY tranche_age
+    )";
+
+    if (!query.exec(sql)) {
+        QMessageBox::critical(nullptr, "Erreur SQL", query.lastError().text());
+        return;
+    }
+
+    // Création de la série pour le graphique
+    QPieSeries *series = new QPieSeries();
+    while (query.next()) {
+        QString tranche = query.value(0).toString();
+        int count = query.value(1).toInt();
+        series->append(QString("%1 (%2)").arg(tranche).arg(count), count);
+    }
+
+    if (series->isEmpty()) {
+        QMessageBox::information(nullptr, "Statistiques", "Aucune donnée à afficher.");
+        delete series;
+        return;
+    }
+
+    for (auto slice : series->slices()) {
+        slice->setLabelVisible(true);
+        slice->setLabelFont(QFont("MS Serif", 9));
+    }
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients par tranche d'âge");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QPixmap pix(chartView->sizeHint());
+    pix.fill(Qt::transparent);
+
+    QPainter painter(&pix);
+    chartView->render(&painter);
+    painter.end();
+
+    ui->afficestat_c->setPixmap(pix);
+}*/
+/*void Gclient::afficherStatistiques_client()                   marche!!!!!!!!
+{
+    QSqlQuery query;
+
+    // Requête : extraire l'année à partir de la date_naissance (VARCHAR)
+    QString sql = R"(
+        SELECT TO_CHAR(TO_DATE(date_naissance, 'DD/MM/YYYY'), 'YYYY') AS annee_naissance,
+               COUNT(*) AS nb_clients
+        FROM client
+        WHERE REGEXP_LIKE(date_naissance, '^\d{2}/\d{2}/\d{4}$')  -- ne prend que les dates bien formatées
+        GROUP BY TO_CHAR(TO_DATE(date_naissance, 'DD/MM/YYYY'), 'YYYY')
+        ORDER BY annee_naissance
+    )";
+
+    if (!query.exec(sql))
+    {
+        QMessageBox::critical(this, "Erreur SQL", query.lastError().text());
+        return;
+    }
+
+    // Création du graphique circulaire
+    QPieSeries *series = new QPieSeries();
+    while (query.next())
+    {
+        QString annee = query.value(0).toString();
+        int count = query.value(1).toInt();
+        series->append(QString("%1 (%2)").arg(annee).arg(count), count);
+    }
+
+    if (series->isEmpty())
+    {
+        QMessageBox::information(this, "Statistiques", "Aucune donnée à afficher !");
+        delete series;
+        return;
+    }
+
+    // Afficher les labels sur chaque part du graphique
+    for (auto slice : series->slices())
+    {
+        slice->setLabelVisible(true);
+        slice->setLabelFont(QFont("MS Serif", 9));
+    }
+
+    // Création du graphique
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients par année de naissance");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QChartView chartView(chart);
+    chartView.setRenderHint(QPainter::Antialiasing);
+    chartView.resize(681, 281);
+
+    // Rendu dans le QLabel
+    QPixmap pix(ui->afficestat_c->size());
+    pix.fill(Qt::transparent);
+    QPainter painter(&pix);
+    chartView.resize(ui->afficestat_c->size());
+    chartView.render(&painter);
+
+    //ui->afficestat_c->setPixmap(pix);
+    ui->afficestat_c->setPixmap(pix.scaled(ui->afficestat_c->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+
+}*/
+
+/*void Gclient::afficherStatistiques_client()  taille cv
+{
+    // 1️⃣ Création du graphique
+    QPieSeries *series = new QPieSeries();
+    series->append("Employés", 40);
+    series->append("Clients", 30);
+    series->append("Fournisseurs", 20);
+    series->append("Produits", 10);
+
+    // 2️⃣ Création du graphique (QChart)
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des données OPTISMART");
+    chart->setAnimationOptions(QChart::AllAnimations);
+
+    // 3️⃣ Création de la vue du graphique
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // 4️⃣ 🔹 Fixer la taille du graphique avant capture
+    chartView->resize(681, 281);  // Taille de ta QLabel
+
+    // 5️⃣ Capture du graphique dans une image
+    QPixmap pixmap = QPixmap::fromImage(chartView->grab().toImage());
+
+    // 6️⃣ Redimension du rendu pour bien remplir la QLabel
+    ui->afficestat_c->setPixmap(pixmap.scaled(
+        ui->afficestat_c->size(),
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+        ));
+
+    // 7️⃣ (Optionnel) Centrer l’image dans la QLabel
+    ui->afficestat_c->setAlignment(Qt::AlignCenter);
+}*/
+
+/*void Gclient::afficherStatistiques_client()
+{
+    // 1️⃣ Requête SQL : calcul des tranches d'âge
+    QSqlQuery query;
+    QString sql = R"(
+        SELECT
+            CASE
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) < 20 THEN '<20'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 20 AND 29 THEN '20-29'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 30 AND 39 THEN '30-39'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 40 AND 49 THEN '40-49'
+                ELSE '50+'
+            END AS tranche_age,
+            COUNT(*) AS nb_clients
+        FROM client
+        WHERE REGEXP_LIKE(date_naissance, '^\d{2}/\d{2}/\d{4}$')
+        GROUP BY
+            CASE
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) < 20 THEN '<20'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 20 AND 29 THEN '20-29'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 30 AND 39 THEN '30-39'
+                WHEN FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(date_naissance, 'DD/MM/YYYY'))/12) BETWEEN 40 AND 49 THEN '40-49'
+                ELSE '50+'
+            END
+        ORDER BY tranche_age
+    )";
+
+    if (!query.exec(sql)) {
+        QMessageBox::critical(this, "Erreur SQL", query.lastError().text());
+        return;
+    }
+
+    // 2️⃣ Création de la série pour le camembert
+    QPieSeries *series = new QPieSeries();
+    while (query.next()) {
+        QString tranche = query.value(0).toString();
+        int count = query.value(1).toInt();
+        series->append(QString("%1 (%2)").arg(tranche).arg(count), count);
+    }
+
+    if (series->isEmpty()) {
+        QMessageBox::information(this, "Statistiques", "Aucune donnée à afficher !");
+        delete series;
+        return;
+    }
+
+    // 3️⃣ Affichage des labels des slices
+    for (auto slice : series->slices()) {
+        slice->setLabelVisible(true);
+        slice->setLabelFont(QFont("MS Serif", 10));
+    }
+
+    // 4️⃣ Création du graphique
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients par tranche d'âge");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // 5️⃣ Création du ChartView
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // 6️⃣ Supprimer l'ancien graphique s'il existe
+    if (ui->layout_graphique->count() > 0) {
+        QLayoutItem *item = ui->layout_graphique->takeAt(0);
+        delete item->chartContainer();  // supprime l'ancien QChartView
+        delete item;
+    }
+
+    // 7️⃣ Ajouter le nouveau graphique au layout
+    ui->layout_graphique->addchartContainer(chartView);
+
+    // 8️⃣ Optionnel : définir une taille pour le graphique
+    chartView->setMinimumSize(400, 400);  // tu peux adapter selon ton UI
+    chartView->show();
+}*/
+/*void Gclient::afficherStatistiques_client()            affiche dans un autre fenetre
+{
+    int moins25 = 0, entre25et40 = 0, entre40et60 = 0, plus60 = 0;
+
+    QSqlQuery query("SELECT date_naissance FROM client");
+    while (query.next())
+    {
+        QString dateStr = query.value(0).toString().trimmed();
+        QDate dateNais = QDate::fromString(dateStr, "dd/MM/yyyy");
+        if (!dateNais.isValid())
+            dateNais = QDate::fromString(dateStr, "yyyy-MM-dd");
+        if (!dateNais.isValid())
+            continue;
+
+        int age = dateNais.daysTo(QDate::currentDate()) / 365;
+
+        if (age < 25)
+            moins25++;
+        else if (age < 40)
+            entre25et40++;
+        else if (age < 60)
+            entre40et60++;
+        else
+            plus60++;
+    }
+
+    QPieSeries *series = new QPieSeries();
+    series->append("Moins de 25 ans", moins25);
+    series->append("25 - 40 ans", entre25et40);
+    series->append("40 - 60 ans", entre40et60);
+    series->append("Plus de 60 ans", plus60);
+
+    for (auto slice : series->slices())
+    {
+        double pct = slice->percentage() * 100;
+        slice->setLabel(QString("%1 (%2%)").arg(slice->label()).arg(QString::number(pct, 'f', 1)));
+        slice->setLabelVisible(true);
+    }
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients selon leur âge");
+    chart->setAnimationOptions(QChart::AllAnimations);
+    chart->legend()->setAlignment(Qt::AlignRight);
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // ✅ Fenêtre popup pour afficher le graphique
+    QDialog *dialog = new QDialog(this);
+    dialog->setWindowTitle("Statistiques des clients");
+    dialog->resize(700, 400);
+
+    QVBoxLayout *layout = new QVBoxLayout(dialog);
+    layout->addchartContainer(chartView);
+    dialog->setLayout(layout);
+
+    dialog->exec();
+}*/
+void Gclient::afficherStatistiques_client()
+{
+    int moins25 = 0, entre25et40 = 0, entre40et60 = 0, plus60 = 0;
+
+    QSqlQuery query("SELECT date_naissance FROM client");
+    while (query.next())
+    {
+        QString dateStr = query.value(0).toString().trimmed();
+        QDate dateNais = QDate::fromString(dateStr, "dd/MM/yyyy");
+        if (!dateNais.isValid())
+            dateNais = QDate::fromString(dateStr, "yyyy-MM-dd");
+        if (!dateNais.isValid())
+            continue;
+
+        int age = dateNais.daysTo(QDate::currentDate()) / 365;
+
+        if (age < 25)
+            moins25++;
+        else if (age < 40)
+            entre25et40++;
+        else if (age < 60)
+            entre40et60++;
+        else
+            plus60++;
+    }
+
+    QPieSeries *series = new QPieSeries();
+    series->append("Moins de 25 ans", moins25);
+    series->append("25 - 40 ans", entre25et40);
+    series->append("40 - 60 ans", entre40et60);
+    series->append("Plus de 60 ans", plus60);
+
+    for (auto slice : series->slices())
+        slice->setLabelVisible(true);
+
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Répartition des clients selon leur âge");
+    chart->setAnimationOptions(QChart::AllAnimations);
+
+    // Création du QChartView
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    // Supprimer l'ancien contenu s'il existe
+    QLayout *layout = ui->chartContainer->layout();
+    if (!layout)
+        layout = new QVBoxLayout(ui->chartContainer);
+    else
+    {
+        QLayoutItem *item;
+        while ((item = layout->takeAt(0)) != nullptr)
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
+
+    layout->addWidget(chartView);
+    ui->chartContainer->setLayout(layout);
+}
+
+
+
+void Gclient::on_bstatistique_c_clicked()
+{
+    afficherStatistiques_client();
+}
+
+
+
 
