@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDateEdit>
+#include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -22,7 +23,6 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTableView>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QWidget>
 
@@ -136,7 +136,7 @@ public:
     QPushButton *bp_4;
     QPushButton *bf_4;
     QWidget *fournisseur;
-    QLineEdit *lineEdit_8;
+    QLineEdit *recherche_le;
     QGroupBox *groupBox_7;
     QLabel *label_44;
     QLabel *label_45;
@@ -166,7 +166,7 @@ public:
     QPushButton *bo_5;
     QPushButton *bp_5;
     QPushButton *bf_5;
-    QTableView *tableView;
+    QGraphicsView *graphicsView_statistiques;
     QWidget *page_3;
     QLineEdit *prenomEdit;
     QLabel *label_8;
@@ -795,10 +795,10 @@ public:
         stackedWidget_2->addWidget(produit);
         fournisseur = new QWidget();
         fournisseur->setObjectName("fournisseur");
-        lineEdit_8 = new QLineEdit(fournisseur);
-        lineEdit_8->setObjectName("lineEdit_8");
-        lineEdit_8->setGeometry(QRect(520, 130, 331, 41));
-        lineEdit_8->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
+        recherche_le = new QLineEdit(fournisseur);
+        recherche_le->setObjectName("recherche_le");
+        recherche_le->setGeometry(QRect(520, 130, 331, 41));
+        recherche_le->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);\n"
 "color: rgb(85, 85, 127);\n"
 ""));
         groupBox_7 = new QGroupBox(fournisseur);
@@ -965,9 +965,9 @@ public:
 "color: rgb(51, 51, 51);\n"
 "font: 18pt \"Segoe UI\";\n"
 ""));
-        tableView = new QTableView(fournisseur);
-        tableView->setObjectName("tableView");
-        tableView->setGeometry(QRect(250, 570, 821, 192));
+        graphicsView_statistiques = new QGraphicsView(fournisseur);
+        graphicsView_statistiques->setObjectName("graphicsView_statistiques");
+        graphicsView_statistiques->setGeometry(QRect(505, 561, 411, 241));
         stackedWidget_2->addWidget(fournisseur);
         page_3 = new QWidget();
         page_3->setObjectName("page_3");
@@ -1341,7 +1341,7 @@ public:
         label_38->setText(QString());
         bp_4->setText(QCoreApplication::translate("gfournisseur", "produit", nullptr));
         bf_4->setText(QCoreApplication::translate("gfournisseur", "fournisseur", nullptr));
-        lineEdit_8->setText(QCoreApplication::translate("gfournisseur", "rechercher", nullptr));
+        recherche_le->setText(QCoreApplication::translate("gfournisseur", "rechercher", nullptr));
         groupBox_7->setTitle(QString());
         label_44->setText(QCoreApplication::translate("gfournisseur", "Id", nullptr));
         label_45->setText(QCoreApplication::translate("gfournisseur", "Nom", nullptr));

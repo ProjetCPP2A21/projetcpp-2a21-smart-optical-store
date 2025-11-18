@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql printsupport charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,3 +26,14 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# Additional settings for better performance
+win32: {
+    QMAKE_CXXFLAGS += -O2
+    QMAKE_LFLAGS += -O2
+}
+
+unix: {
+    QMAKE_CXXFLAGS += -O2
+    QMAKE_LFLAGS += -O2
+}

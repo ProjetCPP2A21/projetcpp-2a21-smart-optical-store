@@ -9,37 +9,37 @@ class fournisseur
 {
 public:
     fournisseur();
-    fournisseur(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement);
+    fournisseur(QString ID_FOURNISSEUR, QString NOM, QString ADRESSE, QString EMAIL, QString NUMERO_TELEPHONE, QString CONDITION_PAIEMENT);
 
     // Méthodes
     void afficher(QTableWidget *tableWidget);
     bool ajouter();
-    bool supprimer(QString id);
-    bool modifier(QString id, QString nom, QString adresse, QString email, QString telephone, QString condition_paiement);  // ⭐ NOUVELLE MÉTHODE
+    bool supprimer(QString ID_FOURNISSEUR);
+    bool modifier(QString ID_FOURNISSEUR, QString NOM, QString ADRESSE, QString EMAIL, QString NUMERO_TELEPHONE, QString CONDITION_PAIEMENT);
 
     // Getters
-    QString getID() const { return id; }
-    QString getNom() const { return nom; }
-    QString getAdresse() const { return adresse; }
-    QString getEmail() const { return email; }
-    QString getTelephone() const { return telephone; }
-    QString getConditionPaiement() const { return condition_paiement; }
+    QString getID_FOURNISSEUR() const { return ID_FOURNISSEUR; }
+    QString getNOM() const { return NOM; }
+    QString getADRESSE() const { return ADRESSE; }
+    QString getEMAIL() const { return EMAIL; }
+    QString getNUMERO_TELEPHONE() const { return NUMERO_TELEPHONE; }
+    QString getCONDITION_PAIEMENT() const { return CONDITION_PAIEMENT; }
 
     // Setters
-    void setID(QString id) { this->id = id; }
-    void setNom(QString nom) { this->nom = nom; }
-    void setAdresse(QString adresse) { this->adresse = adresse; }
-    void setEmail(QString email) { this->email = email; }
-    void setTelephone(QString telephone) { this->telephone = telephone; }
-    void setConditionPaiement(QString condition_paiement) { this->condition_paiement = condition_paiement; }
+    void setID_FOURNISSEUR(QString ID_FOURNISSEUR) { this->ID_FOURNISSEUR = ID_FOURNISSEUR; }
+    void setNOM(QString NOM) { this->NOM = NOM; }
+    void setADRESSE(QString ADRESSE) { this->ADRESSE = ADRESSE; }
+    void setEMAIL(QString EMAIL) { this->EMAIL = EMAIL; }
+    void setNUMERO_TELEPHONE(QString NUMERO_TELEPHONE) { this->NUMERO_TELEPHONE = NUMERO_TELEPHONE; }
+    void setCONDITION_PAIEMENT(QString CONDITION_PAIEMENT) { this->CONDITION_PAIEMENT = CONDITION_PAIEMENT; }
 
 private:
-    QString id;
-    QString nom;
-    QString adresse;
-    QString email;
-    QString telephone;
-    QString condition_paiement;
+    QString ID_FOURNISSEUR;
+    QString NOM;
+    QString ADRESSE;
+    QString EMAIL;
+    QString NUMERO_TELEPHONE;
+    QString CONDITION_PAIEMENT;
 };
 
 #endif // FOURNISSEUR_H

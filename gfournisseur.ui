@@ -1796,7 +1796,7 @@ font: 18pt &quot;Segoe UI&quot;;
        </widget>
       </widget>
       <widget class="QWidget" name="fournisseur">
-       <widget class="QLineEdit" name="lineEdit_8">
+       <widget class="QLineEdit" name="recherche_le">
         <property name="geometry">
          <rect>
           <x>520</x>
@@ -2318,13 +2318,13 @@ font: 18pt &quot;Segoe UI&quot;;
          </property>
         </widget>
        </widget>
-       <widget class="QTableView" name="tableView">
+       <widget class="QGraphicsView" name="graphicsView_statistiques">
         <property name="geometry">
          <rect>
-          <x>250</x>
-          <y>570</y>
-          <width>821</width>
-          <height>192</height>
+          <x>505</x>
+          <y>561</y>
+          <width>411</width>
+          <height>241</height>
          </rect>
         </property>
        </widget>
