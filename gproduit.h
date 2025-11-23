@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "produit.h" //
-
+#include <QSortFilterProxyModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,7 +30,11 @@ private slots:
     void on_exportPdfButton_clicked();
     void on_statsButton_clicked();
     void on_trierButton_clicked();
-    void on_genererQrButton_clicked();  // NOUVEAU SLOT
+
+    void on_genererQrButton_clicked();
+
+    void jouerAlerteVocale(int idProduit, const QString &nomProduit, int quantite);
+    void envoyerSMS(const QString &numeroDestinataire, const QString &message);
 
 
 
@@ -38,7 +42,8 @@ private slots:
 private:
     Ui::gproduit *ui;
     produit Ptmp;                    // D'ABORD Ptmp
-    int selectedIdProduit = -1;      // ENSUITE selectedIdProduit
+    int selectedIdProduit = -1;
+
 
 };
 

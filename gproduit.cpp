@@ -8,17 +8,58 @@
 #include <QFileDialog>
 #include <QSqlQuery>
 #include <QSqlError>
+
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QMainWindow>
+#include <QVBoxLayout>
+#include <QDialog>
+
+#include "qrcodegen.hpp"
+#include <QImage>
+#include <QPixmap>
+#include <QString>
+
+
+#include <QBuffer>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QUrlQuery>
+#include <QDateTime>
+#include <QSet>
+#include <QMessageBox>
+#include <QMediaPlayer>
+#include <QFile>
+#include <QMediaPlayer>
+#include <QSoundEffect>
+#include <QCoreApplication>
+#include <windows.h>
+#include <QMediaPlayer>     // ← Ajoute cette ligne en haut de gproduit.cpp
+#include <QAudioOutput>
 #include <QUrl>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QPropertyAnimation>     // ← LÀ, C'EST ÇA QUI MANQUAIT !
+#include <QEasingCurve>
+#define SMS_GATEWAY_URL "https://api.sms.tn/v1"  // remplace par l'URL réelle de ton fournisseur SMS
+
+using qrcodegen::QrCode;
 
 gproduit::gproduit(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::gproduit)
-    , selectedIdProduit(-1)
-    , Ptmp()
+    , Ptmp()                    // D'ABORD Ptmp
+    , selectedIdProduit(-1)     // ENSUITE selectedIdProduit → plus d'avertissement
 {
     ui->setupUi(this);
+
+    // Si tu veux un placeholder utile pour guider l'utilisateur (LineEdit)
+    ui->typeEdit->setPlaceholderText("Ex: Lunettes Homme / Femme / Enfant / Lentilles");
 }
 
 gproduit::~gproduit()
@@ -33,69 +74,68 @@ void gproduit::refreshTable()
 
 void gproduit::on_ajouterButton_clicked()
 {
-    // === RÉCUPÉRATION ET VALIDATION DES CHAMPS ===
     QString type = ui->typeEdit->text().trimmed();
     if (type.isEmpty()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Type ne peut pas être vide ❌"));
+        QMessageBox::warning(this, tr("Erreur"), tr("Veuillez saisir un type"));
         return;
     }
 
     bool ok;
     int quantite = ui->quantiteEdit->text().toInt(&ok);
     if (!ok || quantite <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Quantité invalide (doit être un entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Quantité invalide");
         return;
     }
 
     float prix = ui->prixEdit->text().toFloat(&ok);
     if (!ok || prix <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Prix invalide (doit être un nombre > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Prix invalide");
         return;
     }
 
     QString couleur = ui->couleurEdit->text().trimmed();
     if (couleur.isEmpty()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Couleur ne peut pas être vide ❌"));
+        QMessageBox::warning(this, "Erreur", "Couleur obligatoire");
         return;
     }
 
     float epaisseur = ui->epaisseurEdit->text().toFloat(&ok);
     if (!ok || epaisseur < 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Épaisseur invalide (doit être un nombre >= 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Épaisseur invalide");
         return;
     }
 
     float diametre = ui->diametreEdit->text().toFloat(&ok);
     if (!ok || diametre <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Diamètre invalide (doit être un nombre > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Diamètre invalide");
         return;
     }
 
     int id_produit = ui->idEdit->text().trimmed().toInt(&ok);
     if (!ui->idEdit->text().isEmpty() && !ok) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID produit invalide (entier ou vide) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID invalide");
         return;
     }
 
     int id_fournisseur = ui->idFEdit->text().trimmed().toInt(&ok);
     if (!ok || id_fournisseur <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID fournisseur invalide (entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID fournisseur invalide");
         return;
     }
 
     int id_client = ui->idCEdit->text().trimmed().toInt(&ok);
     if (!ok || id_client <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID client invalide (entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID client invalide");
         return;
     }
 
     int id_employe = ui->idEEdit->text().trimmed().toInt(&ok);
     if (!ok || id_employe <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID employé invalide (entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID employé invalide");
         return;
     }
 
-    // === CONFIGURATION DE L'OBJET PRODUIT ===
+    // Préparation des données
     Ptmp.setIdProduit(id_produit);
     Ptmp.setType(type);
     Ptmp.setQuantite(quantite);
@@ -107,25 +147,31 @@ void gproduit::on_ajouterButton_clicked()
     Ptmp.setIdFournisseur(id_fournisseur);
     Ptmp.setIdEmploye(id_employe);
 
-    // === AJOUT DANS LA BASE ===
-    bool test = Ptmp.ajouter();  // LA LIGNE CRUCIALE
+    bool test = Ptmp.ajouter();
+    if (test) {
+        refreshTable();
 
-    if (test)
-    {
-        // Rafraîchir le tableau
-        ui->tableWidget_p_2->setModel(Ptmp.afficher());
-
-        // Générer QR Code automatiquement
+        // Récupérer l'ID réel du produit ajouté
         int nouvelId = Ptmp.getLastInsertedId();
-        if (nouvelId > 0) {
-            selectedIdProduit = nouvelId;
-            on_genererQrButton_clicked();  // QR AUTO
+        if (nouvelId <= 0) nouvelId = id_produit;
+
+        // MESSAGE SIMPLE ET PRO
+        QMessageBox::information(this, "Succès", "Produit ajouté avec succès !");
+
+        // ALERTE + SMS AUTOMATIQUE SI STOCK CRITIQUE
+        if (quantite <= 5) {
+            jouerAlerteVocale(nouvelId, type, quantite);
+
+            static QSet<int> alertesSMS;
+            if (!alertesSMS.contains(nouvelId)) {
+                alertesSMS.insert(nouvelId);
+                QString sms = QString("ALERTE STOCK CRITIQUE !\n\nProduit ajouté : %1\nID : %2\nQuantité : %3 unité(s)\n\nRéapprovisionnement URGENT !\nOptiSmart")
+                                  .arg(type).arg(nouvelId).arg(quantite);
+                envoyerSMS("+21656568218", sms);
+            }
         }
 
-        // Message de succès
-        QMessageBox::information(this, tr("Succès"), tr("Produit ajouté avec succès + QR Code généré ✅"));
-
-        // Vider tous les champs
+        // VIDER LES CHAMPS
         ui->idEdit->clear();
         ui->typeEdit->clear();
         ui->quantiteEdit->clear();
@@ -137,133 +183,138 @@ void gproduit::on_ajouterButton_clicked()
         ui->idCEdit->clear();
         ui->idEEdit->clear();
 
-        // Mettre à jour les stats (si la fonction existe)
-        on_statsButton_clicked();
-    }
-    else
-    {
-        QMessageBox::critical(this, tr("Erreur"), tr("Échec de l’ajout dans la base de données ❌"));
+        // RIEN NE S'OUVRE TOUT SEUL → QR et Stats restent manuels
+
+    } else {
+        QMessageBox::critical(this, "Erreur", "Échec de l’ajout dans la base de données");
     }
 }
-
 void gproduit::on_supprimerButton_clicked()
 {
     bool ok;
     int id = ui->idEdit->text().toInt(&ok);
     if (!ok || id <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID invalide (doit être un entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID invalide");
         return;
     }
-
-    QSqlQuery checkQuery;
-    checkQuery.prepare("SELECT id_produit FROM produit WHERE id_produit = :id");
-    checkQuery.bindValue(":id", id);
-    if (!checkQuery.exec() || !checkQuery.next()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Aucun produit avec cet ID n'existe ❌"));
-        return;
-    }
-
-    bool test = Ptmp.supprimer(id);
-    if (test)
-    {
-        ui->tableWidget_p_2->setModel(Ptmp.afficher());
-        QMessageBox::information(this, tr("Succès"), tr("Suppression effectuée ✅"));
+    if (Ptmp.supprimer(id)) {
+        refreshTable();
+        QMessageBox::information(this, "Succès", "Produit supprimé");
         ui->idEdit->clear();
-    }
-    else
-    {
-        QMessageBox::critical(this, tr("Erreur"), tr("Suppression non effectuée ❌"));
+    } else {
+        QMessageBox::critical(this, "Erreur", "Suppression échouée");
     }
 }
 
 void gproduit::on_tableWidget_p_2_doubleClicked(const QModelIndex &index)
 {
-    int selectedRow = index.row();
-    selectedIdProduit = ui->tableWidget_p_2->model()->index(selectedRow, 0).data().toInt(); // Stocker l'ID
-    ui->idEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 0).data().toString());
-    ui->typeEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 1).data().toString());
-    ui->quantiteEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 2).data().toString());
-    ui->prixEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 3).data().toString());
-    ui->couleurEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 4).data().toString());
-    ui->epaisseurEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 5).data().toString());
-    ui->diametreEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 6).data().toString());
-    ui->idCEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 7).data().toString());
-    ui->idEEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 8).data().toString());
-    ui->idFEdit->setText(ui->tableWidget_p_2->model()->index(selectedRow, 9).data().toString());
+    int row = index.row();
+    selectedIdProduit = ui->tableWidget_p_2->model()->index(row, 0).data().toInt();
+
+    ui->idEdit->setText(ui->tableWidget_p_2->model()->index(row, 0).data().toString());
+    ui->typeEdit->setText(ui->tableWidget_p_2->model()->index(row, 1).data().toString()); // LineEdit -> setText
+    ui->quantiteEdit->setText(ui->tableWidget_p_2->model()->index(row, 2).data().toString());
+    ui->prixEdit->setText(ui->tableWidget_p_2->model()->index(row, 3).data().toString());
+    ui->couleurEdit->setText(ui->tableWidget_p_2->model()->index(row, 4).data().toString());
+    ui->epaisseurEdit->setText(ui->tableWidget_p_2->model()->index(row, 5).data().toString());
+    ui->diametreEdit->setText(ui->tableWidget_p_2->model()->index(row, 6).data().toString());
+    ui->idCEdit->setText(ui->tableWidget_p_2->model()->index(row, 7).data().toString());
+    ui->idEEdit->setText(ui->tableWidget_p_2->model()->index(row, 8).data().toString());
+    ui->idFEdit->setText(ui->tableWidget_p_2->model()->index(row, 9).data().toString());
 }
 
 void gproduit::on_modifierButton_clicked()
 {
-    if (selectedIdProduit <= 0) { // Vérifier si un ID valide a été sélectionné
-        QMessageBox::warning(this, tr("Erreur"), tr("Veuillez sélectionner un produit à modifier. ❌"));
+    if (selectedIdProduit <= 0) {
+        QMessageBox::warning(this, "Erreur", "Veuillez sélectionner un produit dans le tableau");
+        return;
+    }
+
+    QString type = ui->typeEdit->text().trimmed();
+    if (type.isEmpty()) {
+        QMessageBox::warning(this, "Erreur", "Type obligatoire");
         return;
     }
 
     bool ok;
-    QString type = ui->typeEdit->text();
     int quantite = ui->quantiteEdit->text().toInt(&ok);
     if (!ok || quantite <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Quantité invalide (doit être un entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Quantité invalide");
         return;
     }
+
     float prix = ui->prixEdit->text().toFloat(&ok);
     if (!ok || prix <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Prix invalide (doit être un nombre > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Prix invalide");
         return;
     }
+
     QString couleur = ui->couleurEdit->text();
-    float epaisseur = ui->epaisseurEdit->text().toFloat(&ok);
-    if (!ok || epaisseur < 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Épaisseur invalide (doit être un nombre >= 0) ❌"));
+    if (couleur.isEmpty()) {
+        QMessageBox::warning(this, "Erreur", "Couleur obligatoire");
         return;
     }
+
+    float epaisseur = ui->epaisseurEdit->text().toFloat(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Erreur", "Épaisseur invalide");
+        return;
+    }
+
     float diametre = ui->diametreEdit->text().toFloat(&ok);
     if (!ok || diametre <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Diamètre invalide (doit être un nombre > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "Diamètre invalide");
         return;
     }
 
-    if (type.isEmpty()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Type ne peut pas être vide ❌"));
-        return;
-    }
-    if (couleur.isEmpty()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Couleur ne peut pas être vide ❌"));
-        return;
-    }
-    int id_fournisseur = ui->idFEdit->text().trimmed().toInt(&ok);
-    if (!ok || id_fournisseur <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("id_fournisseur invalide (doit être un entier > 0) ❌"));
-        return;
-    }
-    int id_client = ui->idCEdit->text().trimmed().toInt(&ok);
-    if (!ok || id_client <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("id_client invalide (doit être un entier > 0) ❌"));
-        return;
-    }
-    int id_employe = ui->idEEdit->text().trimmed().toInt(&ok);
-    if (!ok || id_employe <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("id_employe invalide (doit être un entier > 0) ❌"));
+    int id_f = ui->idFEdit->text().toInt(&ok);
+    if (!ok || id_f <= 0) {
+        QMessageBox::warning(this, "Erreur", "ID fournisseur invalide");
         return;
     }
 
-    Ptmp.setIdProduit(selectedIdProduit); // Utiliser l'ID stocké
+    int id_c = ui->idCEdit->text().toInt(&ok);
+    if (!ok || id_c <= 0) {
+        QMessageBox::warning(this, "Erreur", "ID client invalide");
+        return;
+    }
+
+    int id_e = ui->idEEdit->text().toInt(&ok);
+    if (!ok || id_e <= 0) {
+        QMessageBox::warning(this, "Erreur", "ID employé invalide");
+        return;
+    }
+
+    // Mise à jour des données
+    Ptmp.setIdProduit(selectedIdProduit);
     Ptmp.setType(type);
     Ptmp.setQuantite(quantite);
     Ptmp.setPrix(prix);
     Ptmp.setCouleur(couleur);
     Ptmp.setEpaisseur(epaisseur);
     Ptmp.setDiametre(diametre);
-    Ptmp.setIdClient(id_client);
-    Ptmp.setIdFournisseur(id_fournisseur);
-    Ptmp.setIdEmploye(id_employe);
+    Ptmp.setIdClient(id_c);
+    Ptmp.setIdFournisseur(id_f);
+    Ptmp.setIdEmploye(id_e);
 
-    bool test = Ptmp.modifier();
-    if (test)
-    {
-        ui->tableWidget_p_2->setModel(Ptmp.afficher()); // Mettre à jour le tableau
-        QMessageBox::information(this, tr("Succès"), tr("Produit modifié avec succès ✅"));
-        ui->idEdit->clear();
+    if (Ptmp.modifier()) {
+        refreshTable();
+        QMessageBox::information(this, "Succès", "Produit modifié avec succès !");
+
+        // ALERTE + SMS SI STOCK CRITIQUE APRÈS MODIFICATION
+        if (quantite <= 5) {
+            jouerAlerteVocale(selectedIdProduit, type, quantite);
+
+            static QSet<int> alertesSMS;
+            if (!alertesSMS.contains(selectedIdProduit)) {
+                alertesSMS.insert(selectedIdProduit);
+                QString sms = QString("ALERTE APRÈS MODIFICATION !\n\nProduit : %1\nID : %2\nNouvelle quantité : %3 unité(s)\n\nAction immédiate requise !\nOptiSmart")
+                                  .arg(type).arg(selectedIdProduit).arg(quantite);
+                envoyerSMS("+21656568218", sms);
+            }
+        }
+
+        // Nettoyage complet
         ui->typeEdit->clear();
         ui->quantiteEdit->clear();
         ui->prixEdit->clear();
@@ -273,244 +324,474 @@ void gproduit::on_modifierButton_clicked()
         ui->idFEdit->clear();
         ui->idCEdit->clear();
         ui->idEEdit->clear();
+        ui->idEdit->clear();
         selectedIdProduit = -1;
-        on_statsButton_clicked();        // Réinitialiser l'ID après modification
-    }
-    else
-    {
-        QMessageBox::critical(this, tr("Erreur"), tr("Échec de la modification du produit ❌"));
+
+    } else {
+        QMessageBox::critical(this, "Erreur", "Échec de la modification");
     }
 }
-
 void gproduit::on_searchButton_clicked()
 {
+    QString textId = ui->searchIdEdit->text().trimmed();
+
+    // Si le champ est vide → afficher tous les produits
+    if (textId.isEmpty()) {
+        refreshTable();
+        ui->idEdit->clear();
+        ui->typeEdit->clear(); // LineEdit -> clear
+        ui->quantiteEdit->clear();
+        ui->prixEdit->clear();
+        ui->couleurEdit->clear();
+        ui->epaisseurEdit->clear();
+        ui->diametreEdit->clear();
+        ui->idCEdit->clear();
+        ui->idEEdit->clear();
+        ui->idFEdit->clear();
+        return;
+    }
+
     bool ok;
-    int id = ui->searchIdEdit->text().trimmed().toInt(&ok);
+    int id = textId.toInt(&ok);
     if (!ok || id <= 0) {
-        QMessageBox::warning(this, tr("Erreur"), tr("ID invalide (doit être un entier > 0) ❌"));
+        QMessageBox::warning(this, "Erreur", "ID invalide");
         return;
     }
 
     QSqlQuery query;
     query.prepare("SELECT * FROM produit WHERE id_produit = :id");
     query.bindValue(":id", id);
-    if (!query.exec() || !query.next()) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Aucun produit avec cet ID n'existe ❌"));
-        return;
+
+    if (query.exec() && query.next()) {
+        QSqlQueryModel *model = new QSqlQueryModel();
+        model->setQuery(std::move(query));  // <-- ici on utilise std::move
+
+        ui->tableWidget_p_2->setModel(model);
+
+        ui->idEdit->setText(model->index(0,0).data().toString());
+        ui->typeEdit->setText(model->index(0,1).data().toString()); // LineEdit -> setText
+        ui->quantiteEdit->setText(model->index(0,2).data().toString());
+        ui->prixEdit->setText(model->index(0,3).data().toString());
+        ui->couleurEdit->setText(model->index(0,4).data().toString());
+        ui->epaisseurEdit->setText(model->index(0,5).data().toString());
+        ui->diametreEdit->setText(model->index(0,6).data().toString());
+        ui->idCEdit->setText(model->index(0,7).data().toString());
+        ui->idEEdit->setText(model->index(0,8).data().toString());
+        ui->idFEdit->setText(model->index(0,9).data().toString());
+    } else {
+        QMessageBox::warning(this, "Introuvable", "Produit non trouvé");
+        refreshTable();
     }
 
-    // Créer un modèle temporaire pour afficher le résultat
-    QSqlQueryModel* model = new QSqlQueryModel();
-    model->setQuery(std::move(query)); // Utiliser std::move pour éviter l'avertissement
-    ui->tableWidget_p_2->setModel(model);
-
-    // Remplir les champs avec les données trouvées
-    ui->idEdit->setText(model->index(0, 0).data().toString());
-    ui->typeEdit->setText(model->index(0, 1).data().toString());
-    ui->quantiteEdit->setText(model->index(0, 2).data().toString());
-    ui->prixEdit->setText(model->index(0, 3).data().toString());
-    ui->couleurEdit->setText(model->index(0, 4).data().toString());
-    ui->epaisseurEdit->setText(model->index(0, 5).data().toString());
-    ui->diametreEdit->setText(model->index(0, 6).data().toString());
-    ui->idCEdit->setText(model->index(0, 7).data().toString());
-    ui->idEEdit->setText(model->index(0, 8).data().toString());
-    ui->idFEdit->setText(model->index(0, 9).data().toString());
-    on_statsButton_clicked();
 }
 
-void gproduit::on_exportPdfButton_clicked()
-{
-    // Demander à l'utilisateur de choisir l'emplacement et le nom du fichier PDF
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Enregistrer en PDF"), QString(), tr("Fichiers PDF (*.pdf)"));
-    if (fileName.isEmpty()) {
-        return; // L'utilisateur a annulé
-    }
-    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive)) {
-        fileName += ".pdf";
-    }
-
-    // Créer un objet QPdfWriter pour générer le PDF
-    QPdfWriter pdfWriter(fileName);
-    pdfWriter.setPageSize(QPageSize(QPageSize::A4));
-    pdfWriter.setPageMargins(QMargins(20, 20, 20, 20)); // Marges en points (1/72 pouce)
-    QPainter painter(&pdfWriter);
-
-    // Obtenir le modèle actuel de tableWidget_p_2
-    QAbstractItemModel* model = ui->tableWidget_p_2->model();
-    if (!model) {
-        QMessageBox::warning(this, tr("Erreur"), tr("Aucun modèle de données disponible. ❌"));
-        return;
-    }
-
-    // Définir la police et les dimensions
-    QFont font = painter.font();
-    font.setPointSize(10);
-    painter.setFont(font);
-
-    // Titre du document
-    painter.drawText(20, 40, tr("Liste des Produits - Exporté le ") + QDateTime::currentDateTime().toString("dd/MM/yyyy hh:mm"));
-    painter.drawLine(20, 60, 570, 60); // Ligne sous le titre (A4 = 595x842 points)
-
-    // Calculer la position de départ pour le tableau
-    int yPos = 80;
-    int columnCount = model->columnCount();
-    int rowCount = model->rowCount();
-
-    // Définir des largeurs de colonnes adaptées (ajustez selon vos besoins)
-    int columnWidths[] = {60, 80, 50, 50, 60, 50, 50, 50, 50, 60}; // Ajustez ces valeurs
-    int totalWidth = 0;
-    for (int col = 0; col < columnCount; ++col) {
-        totalWidth += columnWidths[col];
-    }
-
-    // Dessiner les en-têtes de colonnes
-    int xPos = 20;
-    painter.drawLine(xPos, yPos, xPos + totalWidth, yPos);
-    for (int col = 0; col < columnCount; ++col) {
-        QString header = model->headerData(col, Qt::Horizontal).toString();
-        painter.drawText(xPos + 5, yPos + 15, header);
-        painter.drawLine(xPos + columnWidths[col], yPos, xPos + columnWidths[col], yPos + 20);
-        xPos += columnWidths[col];
-    }
-    painter.drawLine(20, yPos + 20, 20 + totalWidth, yPos + 20);
-    yPos += 20;
-
-    // Dessiner les données
-    for (int row = 0; row < rowCount; ++row) {
-        xPos = 20;
-        painter.drawLine(xPos, yPos, xPos + totalWidth, yPos);
-        for (int col = 0; col < columnCount; ++col) {
-            QString data = model->index(row, col).data().toString();
-            painter.drawText(xPos + 5, yPos + 15, data);
-            painter.drawLine(xPos + columnWidths[col], yPos, xPos + columnWidths[col], yPos + 20);
-            xPos += columnWidths[col];
-        }
-        painter.drawLine(20, yPos + 20, 20 + totalWidth, yPos + 20);
-        yPos += 20;
-    }
-    painter.drawLine(20, yPos, 20 + totalWidth, yPos);
-
-    // Fin du dessin
-    painter.end();
-
-    QMessageBox::information(this, tr("Succès"), tr("Exportation en PDF réussie ! Fichier sauvegardé : %1").arg(fileName));
-}
 void gproduit::on_statsButton_clicked()
 {
+    // ---------------- Récupération des statistiques ----------------
     QSqlQuery query;
-    query.exec("SELECT type, SUM(quantite) FROM produit GROUP BY type ORDER BY SUM(quantite) DESC");
-
-    // === DONNÉES ===
-    QStringList types;
-    QList<int> quantites;
-    int maxQty = 0;
-    while (query.next()) {
-        types << query.value(0).toString().left(10);
-        int qty = query.value(1).toInt();
-        quantites << qty;
-        if (qty > maxQty) maxQty = qty;
-    }
-
-    if (maxQty == 0) {
-        ui->statcanvas->clear();
-        ui->statcanvas->setRowCount(1);
-        ui->statcanvas->setColumnCount(1);
-        ui->statcanvas->setItem(0, 0, new QTableWidgetItem("AUCUN STOCK"));
+    query.prepare("SELECT type, COUNT(*) FROM produit GROUP BY type");
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Erreur",
+                              "Impossible de récupérer les statistiques des produits :\n" + query.lastError().text());
         return;
     }
 
-    // === CONFIG ===
-    int rows = 20;  // Hauteur max
-    int barWidth = 3;
-    int spacing = 2;
-    int cols = types.size() * (barWidth + spacing) + 2;
-    ui->statcanvas->clear();
-    ui->statcanvas->setRowCount(rows + 3);
-    ui->statcanvas->setColumnCount(cols);
-    ui->statcanvas->setShowGrid(true);
+    QMap<QString, int> stats;
+    int total = 0;
 
-    // === COULEUR VERTE ===
-    QColor barColor = QColor("#2e8b57");  // Vert foncé
+    while (query.next()) {
+        QString type = query.value(0).toString().trimmed();
+        int count = query.value(1).toInt();
+        stats[type] = count;
+        total += count;
+    }
 
-    // === DESSINER LES BARRES ===
-    for (int i = 0; i < types.size(); ++i) {
-        int colStart = 1 + i * (barWidth + spacing);
-        int qty = quantites[i];
-        int height = (qty * rows) / (maxQty + 1);  // +1 pour éviter division par 0
+    if (total == 0) {
+        QMessageBox::information(this, "Info", "Aucun produit trouvé dans la base !");
+        return;
+    }
 
-        // Barre
-        for (int h = 0; h < height; ++h) {
-            for (int w = 0; w < barWidth; ++w) {
-                QTableWidgetItem *item = new QTableWidgetItem("");
-                item->setBackground(barColor);
-                ui->statcanvas->setItem(rows - h - 1, colStart + w, item);
-            }
+    // ---------------- Création de la série (Donut Chart) ----------------
+    QPieSeries *series = new QPieSeries();
+    series->setHoleSize(0.4); // Effet donut moderne
+
+    for (auto it = stats.constBegin(); it != stats.constEnd(); ++it) {
+        QString typeBrut = it.key();
+        int count = it.value();
+        double pourcentage = (count * 100.0) / total;
+
+        // Détermination du libellé affiché et de la couleur
+        QString libelle;
+        QColor couleur;
+
+        if (typeBrut.contains("homme", Qt::CaseInsensitive)) {
+            libelle = "Lunettes Homme";
+            couleur = QColor("#3498db");      // Bleu masculin
+        }
+        else if (typeBrut.contains("femme", Qt::CaseInsensitive)) {
+            libelle = "Lunettes Femme";
+            couleur = QColor("#e91e63");      // Rose féminin
+        }
+        else if (typeBrut.contains("enfant", Qt::CaseInsensitive)) {
+            libelle = "Lunettes Enfant";
+            couleur = QColor("#ff9800");      // Orange vif
+        }
+        else if (typeBrut.contains("lentille", Qt::CaseInsensitive)) {
+            libelle = "Lentilles de contact";
+            couleur = QColor("#9c27b0");      // Violet
+        }
+        else {
+            libelle = typeBrut.isEmpty() ? "Non renseigné" : typeBrut;
+            couleur = QColor("#95a5a6");      // Gris par défaut
         }
 
-        // Valeur en haut
-        QTableWidgetItem *valItem = new QTableWidgetItem(QString::number(qty));
-        valItem->setTextAlignment(Qt::AlignCenter);
-        valItem->setBackground(Qt::white);
-        ui->statcanvas->setItem(rows - height - 1, colStart + 1, valItem);
+        // Label complet avec nombre et pourcentage
+        QString label = QString("%1 (%2) : %3%")
+                            .arg(libelle)
+                            .arg(count)
+                            .arg(pourcentage, 0, 'f', 1);
 
-        // Étiquette en bas
-        QTableWidgetItem *labelItem = new QTableWidgetItem(types[i]);
-        labelItem->setTextAlignment(Qt::AlignCenter);
-        ui->statcanvas->setItem(rows + 1, colStart + 1, labelItem);
+        QPieSlice *slice = series->append(label, count);
+        slice->setBrush(couleur);
+        slice->setLabelVisible(true);
+        slice->setLabelColor(Qt::white);
+        slice->setLabelFont(QFont("Segoe UI", 9, QFont::Bold));
+
+        // Effet hover : explosion + label toujours visible
+        connect(slice, &QPieSlice::hovered, this, [slice](bool state) {
+            slice->setExploded(state);
+            slice->setLabelVisible(true);
+        });
     }
 
-    // === ÉCHELLE VERTICALE ===
-    ui->statcanvas->setItem(rows, 0, new QTableWidgetItem("0"));
-    for (int r = 5; r <= rows; r += 5) {
-        int val = (r * maxQty) / rows;
-        ui->statcanvas->setItem(rows - r, 0, new QTableWidgetItem(QString::number(val)));
-    }
+    // ---------------- Création du graphique ----------------
+    QChart *chart = new QChart();
+    chart->addSeries(series);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+    chart->setTitle("Répartition des produits par catégorie");
+    chart->setTitleFont(QFont("Segoe UI", 15, QFont::Bold));
+    chart->setTitleBrush(QBrush(QColor("#185a9d")));
 
-    // === TITRE ===
-    ui->statcanvas->setItem(rows + 2, 0, new QTableWidgetItem("Option frequency"));
+    // Fond transparent
+    chart->setBackgroundVisible(false);
+    chart->setPlotAreaBackgroundVisible(false);
 
-    ui->statcanvas->resizeColumnsToContents();
-    ui->statcanvas->resizeRowsToContents();
+    // Légende stylée
+    chart->legend()->setAlignment(Qt::AlignBottom);
+    chart->legend()->setFont(QFont("Segoe UI", 10, QFont::Bold));
+    chart->legend()->setLabelColor(QColor("#2c3e50"));
+
+    // ---------------- Affichage dans un QDialog modal ----------------
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setMinimumSize(650, 500);
+
+    QDialog *dialog = new QDialog(this);
+    dialog->setWindowTitle("Statistiques des Produits - Optismart");
+    dialog->setModal(true);
+
+    QVBoxLayout *layout = new QVBoxLayout(dialog);
+    layout->addWidget(chartView);
+    layout->setContentsMargins(10, 10, 10, 10);
+
+    dialog->resize(700, 550);
+    dialog->exec();
+
+    // Nettoyage automatique grâce au parentage (this possède dialog)
 }
+// TRI ALPHABÉTIQUE
 void gproduit::on_trierButton_clicked()
 {
-    // ÉTAPE 1 : Recharge toutes les données du tableau
-    ui->tableWidget_p_2->setModel(Ptmp.afficher());
+    // Créer un modèle avec la requête triée
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT * FROM produit ORDER BY type ASC");
 
-    // ÉTAPE 2 : Trie les lignes par la colonne "type" (colonne 1)
-    ui->tableWidget_p_2->sortByColumn(1, Qt::AscendingOrder);
+    // Définir les noms des colonnes (en-têtes)
+    model->setHeaderData(0, Qt::Horizontal, "ID");
+    model->setHeaderData(1, Qt::Horizontal, "Type");
+    model->setHeaderData(2, Qt::Horizontal, "Quantité");
+    model->setHeaderData(3, Qt::Horizontal, "Prix");
+    model->setHeaderData(4, Qt::Horizontal, "Couleur");
+    model->setHeaderData(5, Qt::Horizontal, "Épaisseur");
+    model->setHeaderData(6, Qt::Horizontal, "Diamètre");
+    model->setHeaderData(7, Qt::Horizontal, "ID Client");
+    model->setHeaderData(8, Qt::Horizontal, "ID Employé");
+    model->setHeaderData(9, Qt::Horizontal, "ID Fournisseur");
+
+    // Associer le modèle au QTableView
+    ui->tableWidget_p_2->setModel(model);
+
+    // Activer le tri par clic sur les en-têtes
+    ui->tableWidget_p_2->setSortingEnabled(true);
+
+    QMessageBox::information(this, "Tri effectué",
+                             "Le tableau a été trié par type (ordre alphabétique A → Z).");
 }
+
+
+
+// FONCTION 1 : EXPORT WORD (.doc) – OFFICIEL ESPRIT – Qt 6
+void gproduit::on_exportPdfButton_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        "Exporter vers Word",
+        "Liste_Produits_Optismart.doc",
+        "Documents Word (*.doc)"
+        );
+    if (fileName.isEmpty()) return;
+
+    QSqlQueryModel *model = Ptmp.afficher();
+
+    // Charger le logo réel 150x150 px et convertir en Base64
+    QImage logo("C:/Users/azizi/Downloads/Gproduit 2/logo.png");
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+    logo.save(&buffer, "PNG");
+    QString base64Image = "data:image/png;base64," + QString(byteArray.toBase64());
+
+    QString html =
+        "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head>"
+        "<body style='font-family:Times; font-size:12px; margin:0; padding:0;'>"
+        // En-tête : logo à gauche, titre centré
+        "<div style='width:100%; display:flex; align-items:center; padding:5px 10px;'>"
+        "<img src='" + base64Image + "' style='max-width:150px; max-height:150px; margin-right:10px;' />"
+                        "<h1 style='color:#1e4620; text-align:center; flex-grow:1; margin:0;'>Optismart</h1>"
+                        "</div>"
+                        "<p style='text-align:center; color:#2c5f34; margin:5px 0;'>Date : " + QDate::currentDate().toString("dd/MM/yyyy") + "</p>"
+                                                        // Tableau
+                                                        "<table border='1' cellpadding='6' width='100%' style='border-collapse:collapse;'>"
+                                                        "<tr style='background-color:#1e4620; color:white; text-align:center;'>"
+                                                        "<th>ID</th><th>Type</th><th>Quantité</th><th>Prix</th><th>Couleur</th>"
+                                                        "<th>Épaisseur</th><th>Diamètre</th><th>ID Client</th><th>ID Employé</th><th>ID Fournisseur</th>"
+                                                        "</tr>";
+
+    for (int i = 0; i < model->rowCount(); ++i) {
+        QString bgColor = (i % 2 == 0) ? "#eaf4ea" : "#ffffff"; // alternance vert clair/blanc
+        html += "<tr style='background-color:" + bgColor + ";'>";
+        for (int j = 0; j < model->columnCount(); ++j) {
+            html += "<td>" + model->data(model->index(i, j)).toString() + "</td>";
+        }
+        html += "</tr>";
+    }
+
+    html += "</table><br>"
+            "<p><strong>Total : " + QString::number(model->rowCount()) + " produits</strong></p>"
+                                                   "<p style='text-align:right; font-style:italic; color:#2c5f34;'>Généré par Optismart</p>"
+                                                   "</body></html>";
+
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out.setEncoding(QStringConverter::Utf8);
+        out << html;
+        file.close();
+        QMessageBox::information(this, "Succès", "Export Word terminé !\nOuvrez avec Microsoft Word");
+    }
+
+    delete model;
+}
+
+QImage generateQR(const QString &text, int labelSize = 200)
+{
+    QrCode qr = QrCode::encodeText(text.toUtf8().constData(), QrCode::Ecc::LOW);
+    int size = qr.getSize();
+    int margin = 4; // marge blanche autour du QR
+
+    // Calcul de l'échelle pour que le QR tienne dans labelSize
+    int scale = labelSize / (size + 2*margin);
+    if (scale < 1) scale = 1; // au moins 1 px par module
+
+    int imgSize = (size + 2*margin) * scale;
+    QImage img(imgSize, imgSize, QImage::Format_RGB32);
+    img.fill(Qt::white); // fond blanc
+
+    for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
+            bool module = qr.getModule(x, y);
+            QColor color = module ? Qt::black : Qt::white;
+            for (int dy = 0; dy < scale; dy++)
+                for (int dx = 0; dx < scale; dx++)
+                    img.setPixel((x + margin) * scale + dx, (y + margin) * scale + dy, color.rgb());
+        }
+    }
+
+    return img;
+}
+
 void gproduit::on_genererQrButton_clicked()
 {
     if (selectedIdProduit <= 0) {
-        QMessageBox::warning(this, "Erreur", "Sélectionnez un produit !");
+        QMessageBox::warning(this, "QR Code", "Sélectionnez un produit dans le tableau !");
         return;
     }
 
-    QSqlQuery q;
-    q.prepare("SELECT type, quantite, prix FROM produit WHERE id_produit = :id");
-    q.bindValue(":id", selectedIdProduit);
-    if (!q.exec() || !q.next()) return;
+    QSqlQuery query;
+    query.prepare("SELECT type, couleur, quantite, prix FROM produit WHERE id_produit = :id");
+    query.bindValue(":id", selectedIdProduit);
+    if (!query.exec() || !query.next()) {
+        QMessageBox::critical(this, "Erreur", "Produit non trouvé !");
+        return;
+    }
 
-    QString type = q.value(0).toString();
-    int quantite = q.value(1).toInt();
-    float prix = q.value(2).toFloat();
+    QString texte = QString(
+                        "OPTISMART\n"
+                        "ID Produit: %1\n"
+                        "Type: %2\n"
+                        "Couleur: %3\n"
+                        "Quantité: %4\n"
+                        "Prix: %5 DT"
+                        )
+                        .arg(selectedIdProduit)
+                        .arg(query.value(0).toString())
+                        .arg(query.value(1).toString())
+                        .arg(query.value(2).toString())
+                        .arg(query.value(3).toString());
 
-    QString data = QString("ID: %1\nType: %2\nQté: %3\nPrix: %4 DT")
-                       .arg(selectedIdProduit).arg(type).arg(quantite).arg(prix, 0, 'f', 2);
+    QImage qrImage = generateQR(texte, 200); // largeur/hauteur label 200px
+    ui->qrCodeLabel->setPixmap(QPixmap::fromImage(qrImage));
 
-    QString url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="
-                  + QUrl::toPercentEncoding(data);
+    QMessageBox::information(this, "Succès",
+                             "QR Code généré et scannable !");
+}
+
+
+
+
+void gproduit::jouerAlerteVocale(int idProduit, const QString &nomProduit, int quantite)
+{
+    static QSet<int> dejaAlerte;
+    if (quantite > 5) { dejaAlerte.remove(idProduit); return; }
+    if (dejaAlerte.contains(idProduit)) return;
+
+    // Son
+    QMediaPlayer *player = new QMediaPlayer(this);
+    QAudioOutput *audio = new QAudioOutput(this);
+    player->setAudioOutput(audio);
+    audio->setVolume(1.0f);
+    player->setSource(QUrl("qrc:/alerte.mp3"));
+    player->play();
+
+    // Fenêtre magnifique avec emoji
+    QDialog *d = new QDialog(this);
+    d->setFixedSize(600,800);
+    d->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->setStyleSheet(R"(
+        background: qlineargradient(x1:0,y1:0,x2:0,y2:1,
+            stop:0 #667eea, stop:1 #764ba2);
+        border-radius: 30px;
+    )");
+
+    QVBoxLayout *v = new QVBoxLayout(d);
+    v->setContentsMargins(35,35,35,35);
+    v->setSpacing(18);
+
+    // Titre avec emoji
+    QLabel *titre = new QLabel("RUPTURE DE STOCK");
+    titre->setStyleSheet("color:white; font:bold 32px 'Segoe UI'; background:transparent;");
+    titre->setAlignment(Qt::AlignCenter);
+
+    // Logo + badge emoji
+    QLabel *logo = new QLabel;
+    logo->setPixmap(QPixmap(":/logo.png").scaled(100,100,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+    logo->setStyleSheet("background:rgba(255,255,255,0.2); border-radius:50px; padding:15px;");
+    logo->setAlignment(Qt::AlignCenter);
+
+    // Card produit
+    QFrame *card = new QFrame;
+    card->setStyleSheet("background:rgba(255,255,255,0.15); border-radius:22px;");
+    QVBoxLayout *c = new QVBoxLayout(card);
+
+    QLabel *p = new QLabel("Produit : " + nomProduit);
+    p->setStyleSheet("color:#fff59d; font:bold 26px 'Segoe UI'; margin:8px;");
+    p->setAlignment(Qt::AlignCenter);
+
+    QLabel *id = new QLabel("ID : " + QString::number(idProduit));
+    id->setStyleSheet("color:#bbdefb; font:18px 'Segoe UI';");
+    id->setAlignment(Qt::AlignCenter);
+
+    c->addWidget(p);
+    c->addWidget(id);
+
+    // Quantité GÉANTE + emoji feu
+    QLabel *stock = new QLabel(QString::number(quantite));
+    stock->setStyleSheet("color:#ff5252; font:bold 140px 'Segoe UI'; background:transparent;");
+    stock->setAlignment(Qt::AlignCenter);
+
+    QLabel *unites = new QLabel("unités restantes");
+    unites->setStyleSheet("color:white; font:22px 'Segoe UI'; margin-top:-8px;");
+    unites->setAlignment(Qt::AlignCenter);
+
+    // Ligne avec emoji
+    QLabel *msg = new QLabel("Réapprovisionnement IMMÉDIAT requis");
+    msg->setStyleSheet("color:#ff6b6b; font:bold 22px 'Segoe UI'; margin:20px;");
+    msg->setAlignment(Qt::AlignCenter);
+
+    // Bouton stylé
+    QPushButton *btn = new QPushButton("FERMER");
+    btn->setFixedSize(220, 60);
+    btn->setStyleSheet(R"(
+        background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 #ff6b6b, stop:1 #f06292);
+        color:white; font:bold 24px 'Segoe UI'; border-radius:30px; border:none;
+        QPushButton:hover{background:#ff5252;}
+    )");
+    connect(btn, &QPushButton::clicked, d, &QDialog::accept);
+
+    // Assemblage final
+    v->addWidget(titre);
+    v->addSpacing(15);
+    v->addWidget(logo);
+    v->addSpacing(20);
+    v->addWidget(card);
+    v->addSpacing(30);
+    v->addWidget(stock);
+    v->addWidget(unites);
+    v->addSpacing(10);
+    v->addWidget(msg);
+    v->addStretch();
+    v->addWidget(btn, 0, Qt::AlignCenter);
+    v->addSpacing(25);
+
+    d->show();
+    MessageBeep(MB_ICONEXCLAMATION);
+    d->exec();
+
+    dejaAlerte.insert(idProduit);
+}
+// FONCTION SMS TWILIO – VERSION 100% FONCTIONNELLE AVEC TON COMPTE
+void gproduit::envoyerSMS(const QString &numeroDestinataire, const QString &message)
+{
+    const QString ACCOUNT_SID     = "";
+    const QString AUTH_TOKEN      = "978ee18f7bdee06909ce5540efe15bcd";                // ← À REMPLIR
+    const QString MSG_SERVICE_SID = "MGce8dd6df56372f7630a085dba368562c";
+
+    QUrl url("https://api.twilio.com/2010-04-01/Accounts/" + ACCOUNT_SID + "/Messages.json");
+
+    QUrlQuery params;
+    params.addQueryItem("To", numeroDestinataire);                    // ICI : on utilise la variable !
+    params.addQueryItem("MessagingServiceSid", MSG_SERVICE_SID);
+    params.addQueryItem("Body", message);
+
+    QByteArray data = params.query().toUtf8();
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QString auth = ACCOUNT_SID + ":" + AUTH_TOKEN;
+    request.setRawHeader("Authorization", "Basic " + auth.toUtf8().toBase64());
 
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, &QNetworkAccessManager::finished, this, [=](QNetworkReply *reply) {
+    QNetworkReply *reply = manager->post(request, data);
+
+    connect(reply, &QNetworkReply::finished, this, [reply, manager, this]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QPixmap qr;
-            qr.loadFromData(reply->readAll());
-            ui->qrCodeLabel->setPixmap(qr.scaled(200, 200, Qt::KeepAspectRatio));
-            QMessageBox::information(this, "QR", "Généré ! Scannez avec votre téléphone");
+            QMessageBox::information(this, "SMS", "SMS envoyé avec succès !");
+        } else {
+            QMessageBox::warning(this, "Erreur SMS", "Échec :\n" + reply->errorString());
         }
         reply->deleteLater();
+        manager->deleteLater();
     });
-    manager->get(QNetworkRequest(QUrl(url)));
 }

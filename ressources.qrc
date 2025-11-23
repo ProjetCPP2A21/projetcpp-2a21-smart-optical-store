@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>../../../OneDrive/Documents/integration crud/logo1.png</file>
+        <file>logo.png</file>
+        <file>alerte.mp3</file>
     </qresource>
 </RCC>

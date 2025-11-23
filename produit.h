@@ -49,7 +49,7 @@ public:
     void setIdClient(int id) { id_client = id; }         // Nouveau
     void setIdFournisseur(int id) { id_fournisseur = id; }
     void setIdEmploye(int id) { id_employe = id; }
-      // Nouveau
+
 
     // Méthodes CRUD
     bool ajouter();

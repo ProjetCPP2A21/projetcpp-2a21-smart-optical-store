@@ -4,28 +4,34 @@ QT += core gui widgets sql
 config +=console
 QT += printsupport
 QT += charts
-
+QT       += core gui sql network charts widgets
 QT += core gui sql network
-
+QT += widgets charts
+QT += multimedia multimediawidgets
+QT += core gui widgets multimedia multimediawidgets
+QT += multimedia        # ← TRÈS IMPORTANT ! Ajoute cette ligne
+RESOURCES +=
+SOURCES += \
+    qrcodegen.cpp
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
 
 SOURCES += \
     connection.cpp \
     main.cpp \
     gproduit.cpp \
     produit.cpp
+    qrcodegen.cpp
 
 HEADERS += \
     connection.h \
     gproduit.h \
-    produit.h
+    produit.h \
+    qrcodegen.hpp
 
 FORMS += \
     gproduit.ui
