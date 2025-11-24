@@ -1,5 +1,12 @@
 QT       += core gui
 QT       +=sql
+QT       += core gui sql widgets printsupport
+QT       += charts sql widgets core gui
+QT       += core gui sql widgets charts
+QT       += charts
+QT       += network
+
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -12,12 +19,14 @@ SOURCES += \
     Gclient.cpp \
     client.cpp \
     connection.cpp \
-    main.cpp
+    main.cpp \
+    smtp.cpp
 
 HEADERS += \
     Gclient.h \
     client.h \
-    connection.h
+    connection.h \
+    smtp.h
 
 FORMS += \
     Gclient.ui

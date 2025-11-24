@@ -3,7 +3,11 @@
 #include "connection.h"
 #include <QMessageBox>
 #include <QApplication>
-
+//email
+#include <QCoreApplication>
+#include <QDebug>
+#include <client.h>
+#include "smtp.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -23,6 +27,9 @@ int main(int argc, char *argv[])
                               QObject::tr("connection failed.\n"
                                           "Click Cancel to exit."), QMessageBox::Cancel);
 
+    // Envoyer les emails d'anniversaire
+    client cl;
+    cl.envoyerEmailAnniversaire();
 
     return a.exec();
 }
