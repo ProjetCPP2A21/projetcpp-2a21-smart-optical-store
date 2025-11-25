@@ -1,5 +1,5 @@
 QT       += core gui
-QT += core gui sql
+QT += core gui sql printsupport
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -14,12 +14,14 @@ SOURCES += \
     connection.cpp \
     main.cpp \
     gordonnance.cpp \
-    ordonnance.cpp
+    ordonnance.cpp \
+    chatbot.cpp
 
 HEADERS += \
     connection.h \
     gordonnance.h \
-    ordonnance.h
+    ordonnance.h \
+    chatbot.h
 
 FORMS += \
     gordonnance.ui

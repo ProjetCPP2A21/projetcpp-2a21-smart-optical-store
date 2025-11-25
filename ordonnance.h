@@ -38,6 +38,12 @@ public:
     void afficher(QTableWidget *tableWidget);
     bool supprimer(QString cin);
     bool modifier(QString ancienCIN);  // NOUVELLE MÉTHODE
+    
+    // Méthodes métier
+    void rechercherParCIN(QString cin, QTableWidget *tableWidget);
+    bool exporterEnPDF(QTableWidget *tableWidget);
+    void trierParNom(QTableWidget *tableWidget);
+    void afficherStatistiques(QWidget *parent = nullptr);
 };
 
 #endif // ORDONNANCE_H

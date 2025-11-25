@@ -52,6 +52,10 @@ public:
     QLabel *label_9;
     QPushButton *pushButton;
     QPushButton *btnSupprimer;
+    QLineEdit *lineEditCIN_2;
+    QPushButton *pushButton_2;
+    QPushButton *pushButton_3;
+    QPushButton *pushButton_5;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *Gordonnance)
@@ -183,7 +187,7 @@ public:
 "color: rgb(51, 51, 51);"));
         label = new QLabel(centralwidget);
         label->setObjectName("label");
-        label->setGeometry(QRect(490, 90, 311, 51));
+        label->setGeometry(QRect(540, 20, 311, 51));
         QFont font;
         font.setFamilies({QString::fromUtf8("Segoe UI")});
         font.setPointSize(20);
@@ -207,6 +211,27 @@ public:
         btnSupprimer->setObjectName("btnSupprimer");
         btnSupprimer->setGeometry(QRect(1039, 483, 101, 31));
         btnSupprimer->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+"font: 14pt \"Segoe UI\";\n"
+"color: rgb(51, 51, 51);"));
+        lineEditCIN_2 = new QLineEdit(centralwidget);
+        lineEditCIN_2->setObjectName("lineEditCIN_2");
+        lineEditCIN_2->setGeometry(QRect(480, 120, 141, 24));
+        pushButton_2 = new QPushButton(centralwidget);
+        pushButton_2->setObjectName("pushButton_2");
+        pushButton_2->setGeometry(QRect(670, 120, 101, 21));
+        pushButton_2->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+"font: 14pt \"Segoe UI\";\n"
+"color: rgb(51, 51, 51);"));
+        pushButton_3 = new QPushButton(centralwidget);
+        pushButton_3->setObjectName("pushButton_3");
+        pushButton_3->setGeometry(QRect(490, 410, 111, 31));
+        pushButton_3->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
+"font: 14pt \"Segoe UI\";\n"
+"color: rgb(51, 51, 51);"));
+        pushButton_5 = new QPushButton(centralwidget);
+        pushButton_5->setObjectName("pushButton_5");
+        pushButton_5->setGeometry(QRect(630, 410, 111, 31));
+        pushButton_5->setStyleSheet(QString::fromUtf8("background-color: rgb(168, 213, 186);\n"
 "font: 14pt \"Segoe UI\";\n"
 "color: rgb(51, 51, 51);"));
         Gordonnance->setCentralWidget(centralwidget);
@@ -250,6 +275,9 @@ public:
         label_9->setText(QString());
         pushButton->setText(QCoreApplication::translate("Gordonnance", "Recherche", nullptr));
         btnSupprimer->setText(QCoreApplication::translate("Gordonnance", "Supprimer", nullptr));
+        pushButton_2->setText(QCoreApplication::translate("Gordonnance", "Recherche", nullptr));
+        pushButton_3->setText(QCoreApplication::translate("Gordonnance", "Trier", nullptr));
+        pushButton_5->setText(QCoreApplication::translate("Gordonnance", "Exporter", nullptr));
     } // retranslateUi
 
 };

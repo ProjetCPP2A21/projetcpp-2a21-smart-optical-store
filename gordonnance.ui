@@ -48,7 +48,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(168, 213, 186);
-border-color: rgb(0, 0, 0);
+border-color: rgb(44, 95, 45);
 color: rgb(51, 51, 51);
 font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
@@ -73,7 +73,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(168, 213, 186);
-border-color: rgb(0, 0, 0);
+border-color: rgb(44, 95, 45);
 color: rgb(51, 51, 51);
 font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
@@ -92,7 +92,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(168, 213, 186);
-border-color: rgb(0, 0, 0);
+border-color: rgb(44, 95, 45);
 color: rgb(51, 51, 51);
 font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
@@ -111,7 +111,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(168, 213, 186);
-border-color: rgb(0, 0, 0);
+border-color: rgb(44, 95, 45);
 color: rgb(51, 51, 51);
 font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
@@ -130,7 +130,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(168, 213, 186);
-border-color: rgb(0, 0, 0);
+border-color: rgb(44, 95, 45);
 color: rgb(51, 51, 51);
 font: 18pt &quot;Segoe UI&quot;;</string>
      </property>
@@ -155,7 +155,7 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(44, 95, 45);</string>
     </property>
     <column>
      <property name="text">
@@ -211,7 +211,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>CIN:</string>
@@ -237,7 +237,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>Nom:</string>
@@ -253,7 +253,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);
+     <string notr="true">color: rgb(44, 95, 45);
 </string>
     </property>
     <property name="text">
@@ -280,7 +280,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);
+     <string notr="true">color: rgb(44, 95, 45);
 </string>
     </property>
    </widget>
@@ -294,7 +294,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>Date:</string>
@@ -310,7 +310,7 @@ color: rgb(51, 51, 51);</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>Medecin:</string>
@@ -337,7 +337,7 @@ color: rgb(51, 51, 51);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 700 italic 10pt &quot;Segoe UI&quot;;
-color: rgb(0, 0, 0);</string>
+color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>Ajouter une ordonnance</string>
@@ -374,8 +374,8 @@ color: rgb(51, 51, 51);</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>90</y>
+      <x>540</x>
+      <y>20</y>
       <width>311</width>
       <height>51</height>
      </rect>
@@ -390,7 +390,7 @@ color: rgb(51, 51, 51);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 700 italic 20pt &quot;Segoe UI&quot;;
-color: rgb(0, 0, 0);</string>
+color: rgb(44, 95, 45);</string>
     </property>
     <property name="text">
      <string>Gestion des ordonnance</string>
@@ -415,12 +415,40 @@ color: rgb(0, 0, 0);</string>
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="btnSupprimer">
     <property name="geometry">
      <rect>
       <x>1140</x>
       <y>430</y>
-      <width>91</width>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);</string>
+    </property>
+    <property name="text">
+     <string>Supprimer</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditCIN_2">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>120</y>
+      <width>141</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>120</y>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -433,12 +461,12 @@ color: rgb(51, 51, 51);</string>
      <string>Recherche</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnSupprimer">
+   <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>1039</x>
-      <y>483</y>
-      <width>101</width>
+      <x>450</x>
+      <y>410</y>
+      <width>111</width>
       <height>31</height>
      </rect>
     </property>
@@ -448,7 +476,43 @@ font: 14pt &quot;Segoe UI&quot;;
 color: rgb(51, 51, 51);</string>
     </property>
     <property name="text">
-     <string>Supprimer</string>
+     <string>Trier</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>410</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);</string>
+    </property>
+    <property name="text">
+     <string>Exporter</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_10">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>410</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);</string>
+    </property>
+    <property name="text">
+     <string>Statistique</string>
     </property>
    </widget>
   </widget>
