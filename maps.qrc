@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource prefix="/">
+    <file>CarteFournisseurs.qml</file>
+    <file>FournisseurMarker.qml</file>
+</qresource>
+</RCC>
