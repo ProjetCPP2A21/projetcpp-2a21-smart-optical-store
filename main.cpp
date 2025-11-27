@@ -14,6 +14,9 @@
 #include <QDebug>
 #include <client.h>
 #include "smtp.h"
+#include <QImage>
+#include <QPixmap>
+#include <QLabel>
 
 void loadStyleSheet(QApplication& app, const QString& filename) {
     QFile styleFile(filename);
@@ -28,6 +31,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     optismart w;
+
     w.show();
     Connection* c= Connection::instance();
 

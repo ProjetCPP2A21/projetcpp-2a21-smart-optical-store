@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="employe">
      <widget class="QGroupBox" name="tab">
@@ -1702,8 +1702,8 @@ font: 18pt &quot;Segoe UI&quot;;</string>
      <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>100</y>
+        <x>240</x>
+        <y>90</y>
         <width>891</width>
         <height>711</height>
        </rect>
@@ -1805,7 +1805,7 @@ color: rgb(0, 0, 0);</string>
        <property name="geometry">
         <rect>
          <x>700</x>
-         <y>350</y>
+         <y>30</y>
          <width>161</width>
          <height>41</height>
         </rect>
@@ -1829,39 +1829,48 @@ color: rgb(51, 51, 51);</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">color: rgb(4, 4, 4);
-background-color: rgb(255, 232, 196);</string>
+        <string notr="true">background-color: rgb(253, 241, 221);
+color: rgb(0, 0, 0);
+</string>
        </property>
+       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
       </widget>
-      <widget class="QTableWidget" name="statcanvas">
+      <widget class="QLabel" name="qrCodeLabel">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>410</y>
-         <width>881</width>
-         <height>291</height>
+         <x>710</x>
+         <y>459</y>
+         <width>161</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="genererQrButton">
+       <property name="geometry">
+        <rect>
+         <x>680</x>
+         <y>350</y>
+         <width>151</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 232, 196);
-gridline-color: rgb(255, 232, 196);
-color: rgb(17, 17, 17);</string>
+        <string notr="true">background-color: rgb(168, 213, 186);
+font: 14pt &quot;Segoe UI&quot;;
+color: rgb(51, 51, 51);
+</string>
        </property>
-       <property name="showGrid">
-        <bool>false</bool>
+       <property name="text">
+        <string>QR CODE</string>
        </property>
-       <attribute name="horizontalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderHighlightSections">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderHighlightSections">
-        <bool>false</bool>
-       </attribute>
       </widget>
       <zorder>tableWidget_p_2</zorder>
       <zorder>supprimerButton</zorder>
@@ -1870,7 +1879,8 @@ color: rgb(17, 17, 17);</string>
       <zorder>searchButton</zorder>
       <zorder>searchIdEdit</zorder>
       <zorder>trierButton</zorder>
-      <zorder>statcanvas</zorder>
+      <zorder>qrCodeLabel</zorder>
+      <zorder>genererQrButton</zorder>
      </widget>
      <widget class="QGroupBox" name="groupBox_p">
       <property name="geometry">

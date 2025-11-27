@@ -6,7 +6,16 @@ QT       += charts sql widgets core gui
 QT       += core gui sql widgets charts
 QT       += charts
 QT       += network
-
+#produit
+QT += printsupport
+QT += charts
+QT       += core gui sql network charts widgets
+QT += core gui sql network
+QT += widgets charts
+QT += multimedia multimediawidgets
+QT += core gui widgets multimedia multimediawidgets
+QT += multimedia
+#produit
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,7 +35,9 @@ SOURCES += \
     optismart.cpp \
     ordonnance.cpp \
     produit.cpp \
+    qrcodegen.cpp \
     smtp.cpp
+
 
 HEADERS += \
     authentification.h \
@@ -37,7 +48,9 @@ HEADERS += \
     optismart.h \
     ordonnance.h \
     produit.h \
+    qrcodegen.hpp \
     smtp.h
+
 
 FORMS += \
     optismart.ui
