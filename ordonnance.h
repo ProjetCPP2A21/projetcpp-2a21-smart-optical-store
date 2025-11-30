@@ -5,6 +5,8 @@
 #include <QSqlQuery>
 #include <QTableWidget>
 #include <QDate>
+#include <QList>
+#include <QPair>
 
 class Ordonnance
 {
@@ -34,10 +36,26 @@ public:
     void setDate(QDate d) { date = d; }
 
     // Méthodes CRUD
-    bool ajouterOrdonnance();
-    void afficherOrdonnance(QTableWidget *tableWidget);
-    bool supprimerOrdonnance(QString cin);
-    bool modifierOrdonnance(QString ancienCIN);  // NOUVELLE MÉTHODE
+    bool ajouter();
+    void afficher(QTableWidget *tableWidget);
+    bool supprimer(QString cin);
+    bool modifier(QString ancienCIN);  // NOUVELLE MÉTHODE
+
+    
+    // Méthodes métier
+    void rechercherParCIN(QString cin, QTableWidget *tableWidget);
+    bool exporterEnPDF(QTableWidget *tableWidget);
+    void trierParNom(QTableWidget *tableWidget);
+    void afficherStatistiques(QWidget *parent = nullptr);
+    
+    // Méthode pour récupérer les données de prévisions
+    static QList<QPair<QString, QDate>> recupererDonneesPrevisions();
+    
+    // Méthodes de compatibilité (anciennes)
+    bool ajouterOrdonnance() { return ajouter(); }
+    void afficherOrdonnance(QTableWidget *tableWidget) { afficher(tableWidget); }
+    bool supprimerOrdonnance(QString cin) { return supprimer(cin); }
+    bool modifierOrdonnance(QString ancienCIN) { return modifier(ancienCIN); }
 };
 
 #endif // ORDONNANCE_H

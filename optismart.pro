@@ -33,6 +33,7 @@ CONFIG += c++17
 
 SOURCES += \
     authentification.cpp \
+    chatbot.cpp \
     client.cpp \
     connection.cpp \
     employe.cpp \
@@ -47,6 +48,7 @@ SOURCES += \
 
 HEADERS += \
     authentification.h \
+    chatbot.h \
     client.h \
     connection.h \
     employe.h \

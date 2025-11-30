@@ -7,12 +7,14 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QWidget>
+#include "qtextedit.h"
 #include "ui_optismart.h"
 #include "produit.h"
 #include "fournisseur.h"
 #include "ordonnance.h"
 #include "client.h"
 #include "employe.h"
+#include "chatbot.h"
 
 // ⭐ AJOUTS POUR LA CARTE
 #include <QQuickWidget>
@@ -121,13 +123,60 @@ private slots:
     void on_bmodifier_o_clicked();
     void on_bactualiser_o_clicked();
     void on_tableWidget_o_clicked(const QModelIndex &index);
+    void on_brechercher_o_clicked();  // Recherche par CIN
+    void on_bexporter_o_clicked();    // Export PDF
+    void on_btrier_o_clicked();       // Tri par nom
+    void on_bstatistique_o_clicked(); // Statistiques
+    void on_bchatbot_o_clicked();     // Bouton Chatbot
+    void on_bprevision_o_clicked();   // Bouton Prévisions
 
 private:
     QString cinSelectionne;
     Ordonnance ord;
+    Chatbot chatbot;
     void actualiserAffichageOrdonnance();
     bool validerCIN(const QString& cin);
     bool validerNomPrenom(const QString& texte, const QString& champ);
+    
+    // Fonctionnalités avancées
+    void initialiserChatbot(QWidget *parentWidget);
+    void initialiserPrevisions(QWidget *parentWidget);
+    void mettreAJourPrevisions();
+    
+    // Structures pour les prévisions
+    struct PrevisionData {
+        QString volumeTexte;
+        QString volumeDetail;
+        QString medecinTexte;
+        QString medecinDetail;
+        QString jourTexte;
+        QString jourDetail;
+        bool hasVolume = false;
+        bool hasMedecin = false;
+        bool hasJour = false;
+    };
+    
+    PrevisionData calculerPrevisions() const;
+    
+    // Widgets pour chatbot et prévisions
+    QTextEdit *textEditChat;
+    QLineEdit *lineEditChatbot;
+    QLabel *labelVolumeValeur;
+    QLabel *labelVolumeDetail;
+    QLabel *labelMedecinValeur;
+    QLabel *labelMedecinDetail;
+    QLabel *labelJourValeur;
+    QLabel *labelJourDetail;
+    
+    // Dialogues pour chatbot et prévisions
+    QDialog *dialogChatbot;
+    QDialog *dialogPrevision;
+    
+    // Slots pour chatbot
+    void on_btnChatbotEnvoyer_clicked();
+    void on_lineEditChatbot_returnPressed();
+    void ajouterMessageChat(const QString &message, bool estUtilisateur = false);
+    void verifierAlertes();
 };
 
 #endif // OPTISMART_H
