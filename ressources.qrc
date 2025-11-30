@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pngegg (1) (1).png</file>
+        <file>quitter.png</file>
+        <file>logo1.png</file>
+        <file>alerte.mp3</file>
+        <file>CarteFournisseurs.qml</file>
+        <file>FournisseurMarker.qml</file>
+    </qresource>
+</RCC>
