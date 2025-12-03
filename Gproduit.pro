@@ -9,9 +9,12 @@ QT += core gui sql network
 QT += widgets charts
 QT += multimedia multimediawidgets
 QT += core gui widgets multimedia multimediawidgets
-QT += multimedia        # ← TRÈS IMPORTANT ! Ajoute cette ligne
+QT += multimedia
+QT       += core gui sql network multimedia multimediawidgets charts serialport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 RESOURCES +=
 SOURCES += \
+    arduino_produit.cpp \
     qrcodegen.cpp
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -28,6 +31,7 @@ SOURCES += \
     qrcodegen.cpp
 
 HEADERS += \
+    arduino_produit.h \
     connection.h \
     gproduit.h \
     produit.h \

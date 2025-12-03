@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "produit.h" //
 #include <QSortFilterProxyModel>
+#include "arduino_produit.h"   // ← Cette ligne !
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,6 +36,8 @@ private slots:
 
     void jouerAlerteVocale(int idProduit, const QString &nomProduit, int quantite);
     void envoyerSMS(const QString &numeroDestinataire, const QString &message);
+     void onCarteDetectee(const QString &uid);
+
 
 
 
@@ -43,6 +46,7 @@ private:
     Ui::gproduit *ui;
     produit Ptmp;                    // D'ABORD Ptmp
     int selectedIdProduit = -1;
+    arduino_produit arduinoProduit;
 
 
 };
