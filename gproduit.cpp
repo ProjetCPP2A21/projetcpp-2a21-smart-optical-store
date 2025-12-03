@@ -545,8 +545,8 @@ void gproduit::jouerAlerteVocale(int idProduit, const QString &nomProduit, int q
 /* ==================== SMS TWILIO ==================== */
 void gproduit::envoyerSMS(const QString &numeroDestinataire, const QString &message)
 {
-    const QString ACCOUNT_SID = "AC90f0fe3a8963dd145c6525c217ab84f6";
-    const QString AUTH_TOKEN = "978ee18f7bdee06909ce5540efe15bcd";
+    const QString ACCOUNT_SID = "";
+    const QString AUTH_TOKEN = "";
     const QString MSG_SERVICE_SID = "MGce8dd6df56372f7630a085dba368562c";
 
     QUrl url("https://api.twilio.com/2010-04-01/Accounts/" + ACCOUNT_SID + "/Messages.json");
