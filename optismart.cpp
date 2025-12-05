@@ -79,6 +79,12 @@
 #include <QPair>
 #include <cmath>
 #include <algorithm>
+#include "arduino_produit.h"
+#include <QSqlError>    // nécessaire pour query.lastError()
+#include <QSqlDriver>
+#include <QTimer>//
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 
 //produit
 using qrcodegen::QrCode;
@@ -105,6 +111,7 @@ optismart::optismart(QWidget *parent)
     , dialogPrevision(nullptr)
 {
     ui->setupUi(this);
+    connect(&arduinoProduit, &arduino_produit::carteDetectee, this, &optismart::onCarteDetectee);
 
 
     QMediaPlayer *player = new QMediaPlayer(this);
@@ -116,11 +123,11 @@ optismart::optismart(QWidget *parent)
     ui->stackedWidget->setCurrentIndex(5);
 
     // ⭐ AJOUT: Configuration fournisseur (DOIT ÊTRE AVANT chargerProduits())
-  //  setupInterfaceFournisseur();
+    //  setupInterfaceFournisseur();
     setupCarteFournisseurs();
     actualiserAffichageFournisseur();
 
-   // chargerProduits();
+    // chargerProduits();
 
     //client
     connect(ui->tableWidget_c->horizontalHeader(), &QHeaderView::sectionClicked, this, &optismart::recolorerToutesLesLignes);
@@ -143,7 +150,7 @@ optismart::optismart(QWidget *parent)
     }
     //  ajuster la taille des colonnes automatiquement
     ui->tableWidget_c->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-//
+    //
     QRegularExpression regexCIN("[0-9]{1,8}");
     QRegularExpressionValidator *validatorCIN = new QRegularExpressionValidator(regexCIN, this);
     ui->linecin_o->setValidator(validatorCIN);
@@ -284,7 +291,7 @@ optismart::optismart(QWidget *parent)
     connect(ui->bp_6, &QPushButton::clicked, this, [=]() { setPage(2); });
     connect(ui->bf_6, &QPushButton::clicked, this, [=]() { setPage(3); });
     connect(ui->bo_6, &QPushButton::clicked, this, [=]() { setPage(4); });
-    
+
     // Créer les boutons Chatbot et Prévisions pour la page ordonnance
     // On les ajoute au groupBox_6 pour qu'ils soient bien positionnés relativements aux autres boutons
     if (ui->groupBox_6) {
@@ -295,7 +302,7 @@ optismart::optismart(QWidget *parent)
         btnChatbot->setGeometry(189, 540, 131, 41);
         btnChatbot->setStyleSheet("QPushButton { background-color: rgb(168, 213, 186); font: 14pt 'Segoe UI'; color: rgb(51, 51, 51); }");
         connect(btnChatbot, &QPushButton::clicked, this, &optismart::on_bchatbot_o_clicked);
-        
+
         // Bouton Prévisions - à droite du bouton Statistique (qui est à x=340 + 131 = 471)
         QPushButton *btnPrevision = new QPushButton("🔮 Prévisions", ui->groupBox_6);
         btnPrevision->setObjectName("bprevision_o");
@@ -304,7 +311,7 @@ optismart::optismart(QWidget *parent)
         btnPrevision->setStyleSheet("QPushButton { background-color: rgb(168, 213, 186); font: 14pt 'Segoe UI'; color: rgb(51, 51, 51); }");
         connect(btnPrevision, &QPushButton::clicked, this, &optismart::on_bprevision_o_clicked);
     }
-    
+
     // Connecter les boutons existants d'ordonnance
     // Le bouton de recherche existe déjà dans l'UI avec le nom brechercher_o
     // La connexion se fera automatiquement via le système de slots de Qt si le nom correspond
@@ -1556,7 +1563,7 @@ void optismart::on_ajouterButton_clicked()
     Ptmp.setIdEmploye(id_employe);
 
     if (Ptmp.ajouter()) {
-       chargerProduits();
+        chargerProduits();
         int nouvelId = Ptmp.getLastInsertedId();
         if (nouvelId > 0) selectedIdProduit = nouvelId;
 
@@ -2023,6 +2030,128 @@ void optismart::envoyerSMS(const QString &numeroDestinataire, const QString &mes
         manager->deleteLater();
     });
 }
+void optismart::onCarteDetectee(const QString &uid) {
+    QString rfid = uid.trimmed().toUpper();
+    if (rfid.length() != 8) return;
+
+    produit p;
+
+    // Récupérer les infos du produit via RFID
+    QMap<QString, QVariant> prod = p.getProduitInfoByRFID(rfid);
+
+    if (!prod.value("found").toBool()) {
+        QMessageBox::information(this, "Carte inconnue",
+                                 "Produit non enregistré\nUID : " + rfid);
+        return;
+    }
+
+    // Récupérer les 3 informations
+    QString couleur = prod["couleur"].toString();
+    QString type = prod["type"].toString();
+    double prix = prod["prix"].toDouble();
+
+    // Création de la fenêtre QDialog
+    QDialog *d = new QDialog(this);
+    d->setFixedSize(550, 400);  // Plus grande pour afficher 3 infos
+    d->setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+
+    // Style avec dégradé
+    d->setStyleSheet(
+        "QDialog {"
+        "  background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "  stop:0 #1e3a5f, stop:1 #0f172a);"
+        "  border-radius: 20px;"
+        "  color: white;"
+        "}"
+        );
+
+    QVBoxLayout *layout = new QVBoxLayout(d);
+    layout->setContentsMargins(40, 30, 40, 30);
+    layout->setSpacing(20);
+
+    // Titre
+    QLabel *titre = new QLabel("🕶️ LUNETTE DÉTECTÉE");
+    titre->setAlignment(Qt::AlignCenter);
+    titre->setStyleSheet("font: bold 28px 'Segoe UI'; color: #00e676;");
+    layout->addWidget(titre);
+
+    // --- COULEUR ---
+    QLabel *couleurLabel = new QLabel("Couleur : " + couleur);
+    couleurLabel->setAlignment(Qt::AlignCenter);
+    couleurLabel->setStyleSheet(
+        "font: bold 20px;"
+        "color: #e0f2fe;"
+        "background: rgba(0,230,118,0.2);"
+        "padding: 10px;"
+        "border-radius: 12px;"
+        "border: 2px solid #00e676;"
+        );
+    layout->addWidget(couleurLabel);
+
+    // --- TYPE ---
+    QLabel *typeLabel = new QLabel("Type : " + type);
+    typeLabel->setAlignment(Qt::AlignCenter);
+    typeLabel->setStyleSheet(
+        "font: bold 15px;"
+        "color: #e0f2fe;"
+        "background: rgba(96,165,250,0.2);"
+        "padding: 10px;"
+        "border-radius: 10px;"
+        "border: 2px solid #60a5fa;"
+        );
+    layout->addWidget(typeLabel);
+
+    // --- PRIX ---
+    QLabel *prixLabel = new QLabel(QString("Prix : %1 DT").arg(prix, 0, 'f', 2));
+    prixLabel->setAlignment(Qt::AlignCenter);
+    prixLabel->setStyleSheet(
+        "font: bold 24px;"
+        "color: #ffd700;"
+        "background: rgba(255,215,0,0.15);"
+        "padding: 15px;"
+        "border-radius: 12px;"
+        "border: 2px solid #ffd700;"
+        );
+    layout->addWidget(prixLabel);
+
+    // Affichage du numéro de carte RFID
+    QLabel *carteLabel = new QLabel("📇 Carte : " + rfid);
+    carteLabel->setAlignment(Qt::AlignCenter);
+    carteLabel->setStyleSheet("font: 14px; color: #94a3b8; margin-top: 10px;");
+    layout->addWidget(carteLabel);
+
+    // Bouton Fermer
+    QPushButton *okButton = new QPushButton("✓ Fermer");
+    okButton->setFixedSize(220, 50);
+    okButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #1e40af;"
+        "  color: white;"
+        "  font: bold 18px;"
+        "  border-radius: 25px;"
+        "  border: 3px solid #60a5fa;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #2563eb;"
+        "}"
+        );
+    connect(okButton, &QPushButton::clicked, d, &QDialog::close);
+    layout->addWidget(okButton, 0, Qt::AlignCenter);
+
+    // Animation sur le prix (car c'est l'info importante)
+    QPropertyAnimation *zoom = new QPropertyAnimation(prixLabel, "geometry");
+    QRect start = prixLabel->geometry();
+    QRect big = start.adjusted(-15, -8, 15, 8);
+    zoom->setDuration(700);
+    zoom->setStartValue(start);
+    zoom->setKeyValueAt(0.5, big);
+    zoom->setEndValue(start);
+    zoom->setEasingCurve(QEasingCurve::OutElastic);
+    zoom->start(QAbstractAnimation::DeleteWhenStopped);
+
+    d->exec();
+}
 
 // ⭐ AJOUT: FONCTIONS POUR ORDONNANCE
 
@@ -2234,7 +2363,7 @@ void optismart::on_tableWidget_o_clicked(const QModelIndex &index)
 void optismart::on_brechercher_o_clicked()
 {
     QString cinRecherche = ui->linerechercher_o->text().trimmed();
-    
+
     if (cinRecherche.isEmpty()) {
         isFilteringOrdonnances = false;
         actualiserAffichageOrdonnance();
@@ -2244,14 +2373,14 @@ void optismart::on_brechercher_o_clicked()
     }
     isFilteringOrdonnances = true;
     ord.rechercherParCIN(cinRecherche, ui->tableWidget_o);
-    
+
     if (ui->tableWidget_o->rowCount() == 0) {
         QMessageBox::information(this, "Recherche",
                                  "Aucune ordonnance trouvée pour le CIN: " + cinRecherche);
     } else {
         QMessageBox::information(this, "Recherche",
-                                QString::number(ui->tableWidget_o->rowCount()) +
-                                " ordonnance(s) trouvée(s) pour le CIN: " + cinRecherche);
+                                 QString::number(ui->tableWidget_o->rowCount()) +
+                                     " ordonnance(s) trouvée(s) pour le CIN: " + cinRecherche);
     }
 }
 
@@ -2290,39 +2419,39 @@ void optismart::initialiserChatbot(QWidget *parentWidget)
     QVBoxLayout *mainLayout = new QVBoxLayout(parentWidget);
     mainLayout->setContentsMargins(20, 20, 20, 20);
     mainLayout->setSpacing(10);
-    
+
     // En-tête avec titre
     QLabel *labelTitre = new QLabel("🤖 Assistant Chatbot", parentWidget);
     labelTitre->setStyleSheet("font: bold 16pt 'Segoe UI'; color: #2c5f2d; margin-bottom: 10px;");
     labelTitre->setAlignment(Qt::AlignCenter);
     mainLayout->addWidget(labelTitre);
-    
+
     // Zone d'affichage des messages
     textEditChat = new QTextEdit(parentWidget);
     textEditChat->setReadOnly(true);
     textEditChat->setStyleSheet("QTextEdit { background-color: white; border: 2px solid #2c5f2d; border-radius: 10px; padding: 10px; font: 11pt 'Segoe UI'; }");
     mainLayout->addWidget(textEditChat);
-    
+
     // Zone de saisie
     QHBoxLayout *inputLayout = new QHBoxLayout();
     inputLayout->setSpacing(10);
-    
+
     lineEditChatbot = new QLineEdit(parentWidget);
     lineEditChatbot->setPlaceholderText("Tapez votre question... (ex: 'Montre-moi les patients du Dr. X')");
     lineEditChatbot->setStyleSheet("QLineEdit { background-color: white; border: 2px solid #2c5f2d; border-radius: 5px; padding: 10px; font: 11pt 'Segoe UI'; color: rgb(44, 95, 45); }");
     inputLayout->addWidget(lineEditChatbot, 1);
-    
+
     QPushButton *btnEnvoyer = new QPushButton("Envoyer", parentWidget);
     btnEnvoyer->setStyleSheet("QPushButton { background-color: rgb(168, 213, 186); font: bold 11pt 'Segoe UI'; color: rgb(51, 51, 51); padding: 10px 20px; border-radius: 5px; } "
                               "QPushButton:hover { background-color: rgb(148, 193, 166); }");
     inputLayout->addWidget(btnEnvoyer);
-    
+
     mainLayout->addLayout(inputLayout);
-    
+
     // Connecter les signaux
     connect(btnEnvoyer, &QPushButton::clicked, this, &optismart::on_btnChatbotEnvoyer_clicked);
     connect(lineEditChatbot, &QLineEdit::returnPressed, this, &optismart::on_lineEditChatbot_returnPressed);
-    
+
     // Message de bienvenue
     ajouterMessageChat("🤖 Bonjour! Je suis votre assistant virtuel.\n\n"
                        "Je peux vous aider à :\n"
@@ -2330,7 +2459,7 @@ void optismart::initialiserChatbot(QWidget *parentWidget)
                        "- Analyser les données\n"
                        "- Détecter des anomalies\n\n"
                        "Tapez 'aide' pour voir la liste des commandes.", false);
-    
+
     // Vérifier les alertes toutes les 30 secondes
     QTimer *timerAlertes = new QTimer(this);
     connect(timerAlertes, &QTimer::timeout, this, &optismart::verifierAlertes);
@@ -2340,7 +2469,7 @@ void optismart::initialiserChatbot(QWidget *parentWidget)
 void optismart::on_btnChatbotEnvoyer_clicked()
 {
     if (!lineEditChatbot) return;
-    
+
     QString message = lineEditChatbot->text().trimmed();
     if (!message.isEmpty()) {
         ajouterMessageChat(message, true);
@@ -2359,20 +2488,20 @@ void optismart::on_lineEditChatbot_returnPressed()
 void optismart::ajouterMessageChat(const QString &message, bool estUtilisateur)
 {
     if (!textEditChat) return;
-    
+
     QString prefixe = estUtilisateur ? "👤 Vous: " : "🤖 Assistant: ";
     QString couleurFond = estUtilisateur ? "#a8d9d0" : "#d3e9d4";
     QString couleurTexte = estUtilisateur ? "#2c5f2d" : "#1a5a1a";
     QString timestamp = QDateTime::currentDateTime().toString("HH:mm");
-    
+
     textEditChat->append(QString("<div style='margin: 5px 0; padding: 8px; border-radius: 5px; background-color: %1; color: %2;'>"
-                                "<b>%3</b> <span style='font-size: 9pt; opacity: 0.8;'>(%4)</span><br>%5</div>")
-                         .arg(couleurFond)
-                         .arg(couleurTexte)
-                         .arg(prefixe)
-                         .arg(timestamp)
-                         .arg(message));
-    
+                                 "<b>%3</b> <span style='font-size: 9pt; opacity: 0.8;'>(%4)</span><br>%5</div>")
+                             .arg(couleurFond)
+                             .arg(couleurTexte)
+                             .arg(prefixe)
+                             .arg(timestamp)
+                             .arg(message));
+
     // Défilement automatique vers le bas
     QScrollBar *scrollBar = textEditChat->verticalScrollBar();
     scrollBar->setValue(scrollBar->maximum());
@@ -2381,7 +2510,7 @@ void optismart::ajouterMessageChat(const QString &message, bool estUtilisateur)
 void optismart::verifierAlertes()
 {
     QStringList anomalies = chatbot.detecterAnomalies();
-    
+
     if (!anomalies.isEmpty() && anomalies.size() <= 3 && textEditChat) {
         QString messageAlerte = "⚠️ **Alertes détectées:**\n";
         for (int i = 0; i < qMin(3, anomalies.size()); ++i) {
@@ -2410,25 +2539,25 @@ void optismart::on_bprevision_o_clicked()
 void optismart::initialiserPrevisions(QWidget *parentWidget)
 {
     if (!parentWidget) return;
-    
+
     QVBoxLayout *mainLayout = new QVBoxLayout(parentWidget);
     mainLayout->setContentsMargins(20, 20, 20, 20);
     mainLayout->setSpacing(16);
-    
+
     QLabel *titre = new QLabel("🔮 Mode Prévision du futur", parentWidget);
     titre->setAlignment(Qt::AlignCenter);
     titre->setStyleSheet("font: bold 18pt 'Segoe UI'; color: #2c5f2d;");
     mainLayout->addWidget(titre);
-    
+
     QLabel *sousTitre = new QLabel("Projette automatiquement l'activité à partir des données déjà enregistrées (moyenne + tendance).", parentWidget);
     sousTitre->setWordWrap(true);
     sousTitre->setAlignment(Qt::AlignCenter);
     sousTitre->setStyleSheet("font: 11pt 'Segoe UI'; color: #1a5a1a;");
     mainLayout->addWidget(sousTitre);
-    
+
     QHBoxLayout *cartesLayout = new QHBoxLayout();
     cartesLayout->setSpacing(16);
-    
+
     // Fonction helper pour créer une carte
     auto creerCarte = [parentWidget](const QString &titre, QLabel *&labelValeur, QLabel *&labelDetail) -> QFrame* {
         QFrame *carte = new QFrame(parentWidget);
@@ -2437,30 +2566,30 @@ void optismart::initialiserPrevisions(QWidget *parentWidget)
         QVBoxLayout *layout = new QVBoxLayout(carte);
         layout->setContentsMargins(16, 16, 16, 16);
         layout->setSpacing(8);
-        
+
         QLabel *labelTitre = new QLabel(titre, carte);
         labelTitre->setStyleSheet("font: bold 14pt 'Segoe UI'; color: #2c5f2d;");
         layout->addWidget(labelTitre);
-        
+
         labelValeur = new QLabel("—", carte);
         labelValeur->setStyleSheet("font: 24pt 'Segoe UI'; color: #1a5a1a;");
         layout->addWidget(labelValeur);
-        
+
         labelDetail = new QLabel("En attente de données...", carte);
         labelDetail->setWordWrap(true);
         labelDetail->setStyleSheet("font: 10pt 'Segoe UI'; color: #2c5f2d;");
         layout->addWidget(labelDetail);
         layout->addStretch();
-        
+
         return carte;
     };
-    
+
     cartesLayout->addWidget(creerCarte("📈 Ordonnances attendues", labelVolumeValeur, labelVolumeDetail), 1);
     cartesLayout->addWidget(creerCarte("👨‍⚕️ Médecin pressenti", labelMedecinValeur, labelMedecinDetail), 1);
     cartesLayout->addWidget(creerCarte("📅 Jour le plus chargé", labelJourValeur, labelJourDetail), 1);
-    
+
     mainLayout->addLayout(cartesLayout);
-    
+
     QPushButton *btnRafraichir = new QPushButton("Rafraîchir les prévisions", parentWidget);
     btnRafraichir->setStyleSheet("QPushButton { background-color: rgb(168, 213, 186); font: bold 12pt 'Segoe UI'; color: rgb(51, 51, 51); padding: 12px 24px; border-radius: 8px; } "
                                  "QPushButton:hover { background-color: rgb(148, 193, 166); }");
@@ -2476,9 +2605,9 @@ void optismart::mettreAJourPrevisions()
     if (!labelVolumeValeur || !labelMedecinValeur || !labelJourValeur) {
         return;
     }
-    
+
     const PrevisionData data = calculerPrevisions();
-    
+
     if (data.hasVolume) {
         labelVolumeValeur->setText(data.volumeTexte);
         labelVolumeDetail->setText(data.volumeDetail);
@@ -2486,7 +2615,7 @@ void optismart::mettreAJourPrevisions()
         labelVolumeValeur->setText("Pas assez de données");
         labelVolumeDetail->setText("Ajoutez quelques ordonnances pour générer une tendance hebdomadaire.");
     }
-    
+
     if (data.hasMedecin) {
         labelMedecinValeur->setText(data.medecinTexte);
         labelMedecinDetail->setText(data.medecinDetail);
@@ -2494,7 +2623,7 @@ void optismart::mettreAJourPrevisions()
         labelMedecinValeur->setText("En attente de données");
         labelMedecinDetail->setText("Les médecins les plus actifs apparaîtront dès qu'un historique de 2 jours sera disponible.");
     }
-    
+
     if (data.hasJour) {
         labelJourValeur->setText(data.jourTexte);
         labelJourDetail->setText(data.jourDetail);
@@ -2507,33 +2636,33 @@ void optismart::mettreAJourPrevisions()
 optismart::PrevisionData optismart::calculerPrevisions() const
 {
     PrevisionData resultat;
-    
+
     QList<QPair<QString, QDate>> donnees = Ordonnance::recupererDonneesPrevisions();
     QMap<QDate, int> ordonnancesParJour;
     QMap<QString, QMap<QDate, int>> activiteParMedecin;
     QMap<QPair<int, int>, int> ordonnancesParSemaine;
     QDate dateMax;
     bool dateMaxValide = false;
-    
+
     for (const auto &paire : donnees) {
         const QString medecin = paire.first;
         const QDate date = paire.second;
-        
+
         if (!date.isValid()) continue;
-        
+
         ordonnancesParJour[date]++;
         activiteParMedecin[medecin][date]++;
-        
+
         int isoYear = 0;
         const int isoWeek = date.weekNumber(&isoYear);
         ordonnancesParSemaine[qMakePair(isoYear, isoWeek)]++;
-        
+
         if (!dateMaxValide || date > dateMax) {
             dateMax = date;
             dateMaxValide = true;
         }
     }
-    
+
     // Prévision du volume hebdomadaire
     if (!ordonnancesParSemaine.isEmpty()) {
         QVector<int> volumes;
@@ -2541,59 +2670,59 @@ optismart::PrevisionData optismart::calculerPrevisions() const
         for (auto it = ordonnancesParSemaine.constBegin(); it != ordonnancesParSemaine.constEnd(); ++it) {
             volumes.append(it.value());
         }
-        
+
         double total = 0.0;
         for (int valeur : volumes) {
             total += valeur;
         }
         const double moyenne = total / volumes.size();
-        
+
         double tendance = 0.0;
         if (volumes.size() >= 2) {
             tendance = static_cast<double>(volumes.last() - volumes[volumes.size() - 2]);
         }
-        
+
         const int prevision = std::max(0, static_cast<int>(std::round(moyenne + tendance)));
-        
+
         resultat.hasVolume = true;
         resultat.volumeTexte = QString("≈ %1 ordonnances").arg(prevision);
         resultat.volumeDetail = QString("Moyenne %.1f/sem, tendance %+0.1f sur les deux dernières semaines.")
                                     .arg(moyenne, 0, 'f', 1)
                                     .arg(tendance, 0, 'f', 1);
     }
-    
+
     // Médecin le plus actif prédit
     if (!activiteParMedecin.isEmpty()) {
         const QDate reference = dateMaxValide ? dateMax : QDate::currentDate();
         const QDate debutFenetre = reference.addDays(-6);
-        
+
         double meilleurScore = -1.0;
         QString medecinTop;
         int totalRecentTop = 0;
-        
+
         for (auto itMed = activiteParMedecin.constBegin(); itMed != activiteParMedecin.constEnd(); ++itMed) {
             double score = 0.0;
             int totalRecent = 0;
-            
+
             for (auto itJour = itMed.value().constBegin(); itJour != itMed.value().constEnd(); ++itJour) {
                 if (itJour.key() < debutFenetre) continue;
-                
+
                 int joursEcoules = itJour.key().daysTo(reference);
                 if (joursEcoules < 0) joursEcoules = 0;
                 else if (joursEcoules > 6) joursEcoules = 6;
-                
+
                 const double poids = 1.0 + (6 - joursEcoules) * 0.15;
                 score += itJour.value() * poids;
                 totalRecent += itJour.value();
             }
-            
+
             if (totalRecent > 0 && score > meilleurScore) {
                 meilleurScore = score;
                 medecinTop = itMed.key();
                 totalRecentTop = totalRecent;
             }
         }
-        
+
         if (meilleurScore > 0) {
             resultat.hasMedecin = true;
             resultat.medecinTexte = medecinTop;
@@ -2601,29 +2730,29 @@ optismart::PrevisionData optismart::calculerPrevisions() const
                                          .arg(totalRecentTop);
         }
     }
-    
+
     // Jour de la semaine le plus chargé
     if (!ordonnancesParJour.isEmpty()) {
         struct JourStats {
             int total = 0;
             int nbJours = 0;
         };
-        
+
         QMap<int, JourStats> statsParJour;
         for (auto it = ordonnancesParJour.constBegin(); it != ordonnancesParJour.constEnd(); ++it) {
             JourStats &stats = statsParJour[it.key().dayOfWeek()];
             stats.total += it.value();
             stats.nbJours += 1;
         }
-        
+
         int meilleurJour = -1;
         double meilleureMoyenne = -1.0;
         JourStats statsRetenus;
-        
+
         for (auto it = statsParJour.constBegin(); it != statsParJour.constEnd(); ++it) {
             const JourStats stats = it.value();
             if (stats.nbJours == 0) continue;
-            
+
             const double moyenneJour = static_cast<double>(stats.total) / stats.nbJours;
             if (moyenneJour > meilleureMoyenne) {
                 meilleureMoyenne = moyenneJour;
@@ -2631,20 +2760,20 @@ optismart::PrevisionData optismart::calculerPrevisions() const
                 statsRetenus = stats;
             }
         }
-        
+
         if (meilleurJour != -1) {
             QString nomJour;
             switch (meilleurJour) {
-                case 1: nomJour = "lundi"; break;
-                case 2: nomJour = "mardi"; break;
-                case 3: nomJour = "mercredi"; break;
-                case 4: nomJour = "jeudi"; break;
-                case 5: nomJour = "vendredi"; break;
-                case 6: nomJour = "samedi"; break;
-                case 7: nomJour = "dimanche"; break;
-                default: nomJour = "jour";
+            case 1: nomJour = "lundi"; break;
+            case 2: nomJour = "mardi"; break;
+            case 3: nomJour = "mercredi"; break;
+            case 4: nomJour = "jeudi"; break;
+            case 5: nomJour = "vendredi"; break;
+            case 6: nomJour = "samedi"; break;
+            case 7: nomJour = "dimanche"; break;
+            default: nomJour = "jour";
             }
-            
+
             resultat.hasJour = true;
             resultat.jourTexte = QString("≈ %1").arg(nomJour);
             resultat.jourDetail = QString("En moyenne %.1f ordonnance(s) chaque %2 (basé sur %3 occurrences).")
@@ -2653,7 +2782,7 @@ optismart::PrevisionData optismart::calculerPrevisions() const
                                       .arg(statsRetenus.nbJours);
         }
     }
-    
+
     return resultat;
 }
 

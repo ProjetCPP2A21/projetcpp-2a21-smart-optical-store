@@ -16,6 +16,7 @@
 #include "employe.h"
 #include "chatbot.h"
 #include "arduino_client.h"
+#include "arduino_produit.h"
 // ⭐ AJOUTS POUR LA CARTE
 #include <QQuickWidget>
 #include <QQuickItem>
@@ -116,9 +117,11 @@ private slots:
     void on_genererQrButton_clicked();
     void jouerAlerteVocale(int idProduit, const QString &nomProduit, int quantite);
     void envoyerSMS(const QString &numeroDestinataire, const QString &message);
+    void onCarteDetectee(const QString &uid);
 
 private:
     produit Ptmp;
+    arduino_produit arduinoProduit;
     bool isFilteringProduits = false;       // if you don't already have it
     bool isFilteringFournisseurs = false;   // NEW
     bool isFilteringOrdonnances = false;    // NEW
@@ -147,12 +150,12 @@ private:
     void actualiserAffichageOrdonnance();
     bool validerCIN(const QString& cin);
     bool validerNomPrenom(const QString& texte, const QString& champ);
-    
+
     // Fonctionnalités avancées
     void initialiserChatbot(QWidget *parentWidget);
     void initialiserPrevisions(QWidget *parentWidget);
     void mettreAJourPrevisions();
-    
+
     // Structures pour les prévisions
     struct PrevisionData {
         QString volumeTexte;
@@ -165,9 +168,9 @@ private:
         bool hasMedecin = false;
         bool hasJour = false;
     };
-    
+
     PrevisionData calculerPrevisions() const;
-    
+
     // Widgets pour chatbot et prévisions
     QTextEdit *textEditChat;
     QLineEdit *lineEditChatbot;
@@ -177,11 +180,11 @@ private:
     QLabel *labelMedecinDetail;
     QLabel *labelJourValeur;
     QLabel *labelJourDetail;
-    
+
     // Dialogues pour chatbot et prévisions
     QDialog *dialogChatbot;
     QDialog *dialogPrevision;
-    
+
     // Slots pour chatbot
     void on_btnChatbotEnvoyer_clicked();
     void on_lineEditChatbot_returnPressed();

@@ -140,3 +140,20 @@ void produit::setFrenchHeaders(QSqlQueryModel *model)
     model->setHeaderData(8, Qt::Horizontal, tr("ID Employé"));
     model->setHeaderData(9, Qt::Horizontal, tr("ID Fournisseur"));
 }
+QMap<QString, QVariant> produit::getProduitInfoByRFID(const QString &rfid) {
+    QMap<QString, QVariant> result;
+    result["found"] = false;
+
+    QSqlQuery query;
+    query.prepare("SELECT couleur, type, prix FROM produit WHERE rfid = :rfid");
+    query.bindValue(":rfid", rfid);
+
+    if (query.exec() && query.next()) {
+        result["couleur"] = query.value(0).toString();
+        result["type"] = query.value(1).toString();
+        result["prix"] = query.value(2).toDouble();
+        result["found"] = true;
+    }
+
+    return result;
+}

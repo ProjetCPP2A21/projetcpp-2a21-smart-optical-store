@@ -41,6 +41,7 @@ public:
     QSqlQueryModel* trierParType();              // ← utilisé dans on_trierButton_clicked
 
     int getLastInsertedId();
+    QMap<QString, QVariant> getProduitInfoByRFID(const QString &rfid);
 
 private:
     int     id_produit = 0;
