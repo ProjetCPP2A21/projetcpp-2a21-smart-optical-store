@@ -16,6 +16,24 @@ optismart::optismart(QWidget *parent)
     , ui(new Ui::optismart)
 {
     ui->setupUi(this);
+    //---------------------------------------arduino----------------------------------------------
+    serial->setPortName("COM3"); // adapte
+    serial->setBaudRate(QSerialPort::Baud9600);
+    serial->setDataBits(QSerialPort::Data8);
+    serial->setParity(QSerialPort::NoParity);
+    serial->setStopBits(QSerialPort::OneStop);
+    serial->setFlowControl(QSerialPort::NoFlowControl);
+
+    if (serial->open(QIODevice::ReadOnly)) {
+        connect(serial, &QSerialPort::readyRead,
+                this, &optismart::onSerialDataReceived);
+        ui->statusbar->showMessage("Port série ouvert");
+    } else {
+        ui->statusbar->showMessage("Erreur port série: " + serial->errorString());
+    }
+
+    ui->label->setText("En attente d'empreinte...");
+    //--------------------------------------------------------------------------
     QMediaPlayer *player = new QMediaPlayer(this);
     QAudioOutput *audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
@@ -106,7 +124,86 @@ optismart::optismart(QWidget *parent)
     ui->stackedWidget->setCurrentIndex(5);
 
 }
+//--------------------------------------------------------------------------------------------------
+void optismart::onSerialDataReceived()
+{
+    QByteArray data = serial->readAll();
+    QString text = QString::fromUtf8(data).trimmed();
 
+    // Exemple reçu : "FINGER_OK:ID=3"
+    if (!text.startsWith("FINGER_OK:ID=")) {
+        qDebug() << "Message non reconnu:" << text;
+        return;
+    }
+
+    QString idStr = text.section('=', 1, 1);  // après le '='
+    int idEmpreinte = idStr.toInt();
+
+    ui->label->setText("Empreinte détectée, ID = " + idStr);
+
+    // 1) On cherche l'employé correspondant
+    QSqlQuery q;
+    q.prepare(
+        "SELECT e.ID_EMPLOYE, e.NOM, e.PRENOM "
+        "FROM EMPLOYE e "
+        "JOIN EMPREINTE_EMPLOYE ee ON e.ID_EMPLOYE = ee.ID_EMPLOYE "
+        "WHERE ee.ID_EMPREINTE = :id"
+        );
+    q.bindValue(":id", idEmpreinte);
+
+    int idEmploye = -1;
+    QString nom, prenom;
+
+    if (q.exec() && q.next()) {
+        idEmploye = q.value("ID_EMPLOYE").toInt();
+        nom = q.value("NOM").toString();
+        prenom = q.value("PRENOM").toString();
+
+        ui->label->setText(
+            "Accès autorisé : " + prenom + " " + nom +
+            " (empreinte " + idStr + ")"
+            );
+
+        // 2) Log ACCEPTE
+        QSqlQuery log;
+        log.prepare(
+            "INSERT INTO JOURNAL_EMPREINTE "
+            "  (ID_LOG, ID_EMPREINTE, ID_EMPLOYE, RESULTAT, MESSAGE) "
+            "VALUES "
+            "  (SEQ_JOURNAL_EMPREINTE.NEXTVAL, :idEmp, :idEmply, 'ACCEPTE', :msg)"
+            );
+        log.bindValue(":idEmp",   idEmpreinte);
+        log.bindValue(":idEmply", idEmploye);
+        log.bindValue(":msg",     "Empreinte reconnue");
+
+        if (!log.exec()) {
+            qDebug() << "Erreur INSERT log ACCEPTE:" << log.lastError().text();
+        }
+
+    } else {
+        // Empreinte inconnue dans la table EMPREINTE_EMPLOYE
+        ui->label->setText(
+            "Empreinte inconnue (ID = " + idStr + "), accès refusé."
+            );
+
+        // Log REFUSE sans ID_EMPLOYE
+        QSqlQuery log;
+        log.prepare(
+            "INSERT INTO JOURNAL_EMPREINTE "
+            "  (ID_LOG, ID_EMPREINTE, ID_EMPLOYE, RESULTAT, MESSAGE) "
+            "VALUES "
+            "  (SEQ_JOURNAL_EMPREINTE.NEXTVAL, :idEmp, NULL, 'REFUSE', :msg)"
+            );
+        log.bindValue(":idEmp", idEmpreinte);
+        log.bindValue(":msg",  "Empreinte non associée à un employé");
+
+        if (!log.exec()) {
+            qDebug() << "Erreur INSERT log REFUSE:" << log.lastError().text();
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------
 void optismart::actualiserAffichagep()
 {}
 
@@ -1165,6 +1262,8 @@ void optismart::on_trierButton_clicked()
 }
 optismart::~optismart()
 {
+    if (serial->isOpen())
+        serial->close();
     delete ui;
 }
 

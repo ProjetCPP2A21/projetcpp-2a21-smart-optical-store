@@ -13,7 +13,7 @@
 #include"ordonnance.h"
 #include <QMediaPlayer>
 #include <QAudioOutput>
-
+#include <QSerialPort>
 
 
 
@@ -27,6 +27,10 @@ class optismart : public QMainWindow
 {
     Q_OBJECT
 
+private slots:
+    void onSerialDataReceived();
+private:
+    QSerialPort *serial;
 public:
     optismart(QWidget *parent = nullptr);
     ~optismart();

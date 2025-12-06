@@ -758,7 +758,8 @@ bool employe::modifier()
     query.bindValue(":adresse", adresse);
     query.bindValue(":email", email);
     query.bindValue(":num_tel", num_tel);
-    query.bindValue(":poste", poste);
+    query.bindValue(":poste", poste.toUpper());
+
 
 
     if (!query.exec()) {

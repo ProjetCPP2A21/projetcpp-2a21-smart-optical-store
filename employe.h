@@ -29,7 +29,7 @@
 #include <QSequentialAnimationGroup>
 
 #include "ui_optismart.h"
-
+//PEXNG1S3YYQVAQ5KYBV7911R
 class employe : public QObject
 {
     Q_OBJECT

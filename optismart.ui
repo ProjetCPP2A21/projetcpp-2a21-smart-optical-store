@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>9</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="employe">
      <widget class="QGroupBox" name="tab">
@@ -690,24 +690,6 @@ font: 11pt &quot;Segoe UI&quot;;</string>
       </property>
       <property name="placeholderText">
        <string>Saisir le nom...</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="brechercher_e">
-      <property name="geometry">
-       <rect>
-        <x>820</x>
-        <y>130</y>
-        <width>161</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(168, 213, 186);
-font: 14pt &quot;Segoe UI&quot;;
-color: rgb(51, 51, 51);</string>
-      </property>
-      <property name="text">
-       <string>rechercher</string>
       </property>
      </widget>
     </widget>
