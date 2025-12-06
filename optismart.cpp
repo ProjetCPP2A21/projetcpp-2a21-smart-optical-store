@@ -109,16 +109,17 @@ optismart::optismart(QWidget *parent)
     , labelJourDetail(nullptr)
     , dialogChatbot(nullptr)
     , dialogPrevision(nullptr)
+    , labelResultatRechercheEmploye(nullptr)  // <-- AJOUT
+    , timerArduinoEmploye(nullptr)  // <-- AJOUT
+    , bufferArduinoEmploye("")  // <-- AJOUT
 {
     ui->setupUi(this);
     connect(&arduinoProduit, &arduino_produit::carteDetectee, this, &optismart::onCarteDetectee);
-
 
     QMediaPlayer *player = new QMediaPlayer(this);
     QAudioOutput *audioOutput = new QAudioOutput(this);
     player->setAudioOutput(audioOutput);
     player->setSource(QUrl::fromLocalFile("sounds/button.mp3"));
-
 
     ui->stackedWidget->setCurrentIndex(5);
 
@@ -128,6 +129,7 @@ optismart::optismart(QWidget *parent)
     actualiserAffichageFournisseur();
 
     // chargerProduits();
+    initialiserArduinoEmploye();
 
     //client
     connect(ui->tableWidget_c->horizontalHeader(), &QHeaderView::sectionClicked, this, &optismart::recolorerToutesLesLignes);
@@ -319,6 +321,10 @@ optismart::optismart(QWidget *parent)
 
 optismart::~optismart()
 {
+    if (timerArduinoEmploye) {
+        timerArduinoEmploye->stop();
+        delete timerArduinoEmploye;
+    }
     delete ui;
 }
 
@@ -2785,5 +2791,149 @@ optismart::PrevisionData optismart::calculerPrevisions() const
 
     return resultat;
 }
+// ==================== ARDUINO EMPLOYÉ ====================
+
+void optismart::initialiserArduinoEmploye()
+{
+    // Connexion Arduino
+    int ret = arduinoEmploye.connect_arduino();
+    switch(ret) {
+    case 0:
+        qDebug() << "Arduino employé connecté sur" << arduinoEmploye.getarduino_port_name();
+        // Connecter le signal readyRead
+        connect(arduinoEmploye.getserial(), &QSerialPort::readyRead,
+                this, &optismart::lireDonneesArduinoEmploye);
+
+        // Timer pour vérifier périodiquement
+        timerArduinoEmploye = new QTimer(this);
+        connect(timerArduinoEmploye, &QTimer::timeout, this, [this]() {
+            if (arduinoEmploye.getserial()->isReadable()) {
+                lireDonneesArduinoEmploye();
+            }
+        });
+        timerArduinoEmploye->start(100); // Vérifier toutes les 100ms
+        break;
+    case 1:
+        qDebug() << "Arduino employé disponible mais non connecté";
+        break;
+    case -1:
+        qDebug() << "Arduino employé non disponible";
+        break;
+    }
+
+    // Créer un label pour afficher le résultat dans la barre d'état
+    labelResultatRechercheEmploye = new QLabel("🔍 Attente de saisie d'ID employé...", this);
+    labelResultatRechercheEmploye->setStyleSheet(
+        "font: bold 10pt 'Segoe UI'; padding: 5px; border: 1px solid #2c5f2d; border-radius: 3px;"
+        );
+    ui->statusbar->addPermanentWidget(labelResultatRechercheEmploye);
+}
+
+void optismart::lireDonneesArduinoEmploye()
+{
+    QByteArray data = arduinoEmploye.read_from_arduino();
+    if (data.isEmpty()) return;
+
+    // Ajouter au buffer
+    bufferArduinoEmploye += QString::fromUtf8(data);
+    qDebug() << "Données Arduino employé reçues:" << QString::fromUtf8(data).toUtf8().toHex()
+             << "Texte:" << QString::fromUtf8(data)
+             << "Buffer total:" << bufferArduinoEmploye;
+
+    // Vérifier si on a un délimiteur de fin (# ou \n)
+    if (bufferArduinoEmploye.contains('#') || bufferArduinoEmploye.contains('\n')) {
+        traiterBufferArduinoEmploye();
+    }
+}
+
+void optismart::traiterBufferArduinoEmploye()
+{
+    if (bufferArduinoEmploye.isEmpty()) {
+        return;
+    }
+
+    qDebug() << "=== TRAITEMENT DU BUFFER EMPLOYÉ ===";
+    qDebug() << "Buffer complet:" << bufferArduinoEmploye;
+
+    // Recherche avec expression régulière
+    QRegularExpression regex("ID_(\\d+)[#\\n\\r]");
+    QRegularExpressionMatchIterator i = regex.globalMatch(bufferArduinoEmploye);
+
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString id = match.captured(1);
+        qDebug() << "ID employé trouvé:" << id;
+        rechercherEmployeParID(id);
+    }
+
+    // Vider le buffer après traitement
+    bufferArduinoEmploye.clear();
+}
+
+void optismart::rechercherEmployeParID(const QString &id)
+{
+    if (id.isEmpty()) {
+        qDebug() << "ID vide, recherche ignorée";
+        return;
+    }
+
+    qDebug() << "Recherche de l'employé ID:" << id;
+
+    QSqlQuery query;
+    query.prepare("SELECT NOM, PRENOM, POSTE FROM EMPLOYE WHERE ID_EMPLOYE = ?");
+    query.bindValue(0, id.toInt());
+
+    if (query.exec() && query.next()) {
+        QString nom = query.value(0).toString();
+        QString prenom = query.value(1).toString();
+        QString poste = query.value(2).toString();
+
+        QString resultat = QString("✅ Employé trouvé: %1 %2 (%3) - ID: %4")
+                               .arg(prenom, nom, poste, id);
+        afficherResultatRechercheEmploye(resultat, true);
+
+        // Envoyer une confirmation à Arduino
+        arduinoEmploye.write_to_arduino("1"); // 1 = trouvé
+    } else {
+        QString resultat = QString("❌ ID %1 non trouvé dans la base de données").arg(id);
+        afficherResultatRechercheEmploye(resultat, false);
+
+        // Envoyer un signal à Arduino
+        arduinoEmploye.write_to_arduino("0"); // 0 = non trouvé
+    }
+}
+
+void optismart::afficherResultatRechercheEmploye(const QString &message, bool trouve)
+{
+    if (!labelResultatRechercheEmploye) return;
+
+    labelResultatRechercheEmploye->setText(message);
+
+    if (trouve) {
+        labelResultatRechercheEmploye->setStyleSheet(
+            "font: bold 10pt 'Segoe UI'; padding: 5px; "
+            "border: 2px solid #4CAF50; border-radius: 3px; "
+            "background-color: #E8F5E9; color: #2E7D32;"
+            );
+    } else {
+        labelResultatRechercheEmploye->setStyleSheet(
+            "font: bold 10pt 'Segoe UI'; padding: 5px; "
+            "border: 2px solid #F44336; border-radius: 3px; "
+            "background-color: #FFEBEE; color: #C62828;"
+            );
+    }
+
+    // Effacer le message après 5 secondes
+    QTimer::singleShot(5000, this, [this]() {
+        if (labelResultatRechercheEmploye) {
+            labelResultatRechercheEmploye->setText("🔍 Attente de saisie d'ID employé...");
+            labelResultatRechercheEmploye->setStyleSheet(
+                "font: bold 10pt 'Segoe UI'; padding: 5px; "
+                "border: 1px solid #2c5f2d; border-radius: 3px;"
+                );
+        }
+    });
+}
+
 
 

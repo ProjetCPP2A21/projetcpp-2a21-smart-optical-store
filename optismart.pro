@@ -7,12 +7,14 @@ QT += serialport
 QT += multimedia multimediawidgets
 QT += quick quickwidgets    # indispensable pour QQuickWidget (carte QML)
 # QT += location positioning   # seulement si tu utilises vraiment la géoloc (sinon inutile)
+QT += serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
 SOURCES += \
+    arduino_o.cpp \
     main.cpp \
     optismart.cpp \
     client.cpp \
@@ -30,6 +32,7 @@ SOURCES += \
     planninghoraire.cpp
 
 HEADERS += \
+    arduino_o.h \
     optismart.h \
     client.h \
     produit.h \

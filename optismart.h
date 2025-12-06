@@ -23,6 +23,7 @@
 #include <QQmlContext>
 #include <QDialog>
 #include <QVBoxLayout>
+#include "arduino_o.h"  // <-- AJOUT: Votre Arduino pour recherche employé
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class optismart; }
@@ -190,6 +191,20 @@ private:
     void on_lineEditChatbot_returnPressed();
     void ajouterMessageChat(const QString &message, bool estUtilisateur = false);
     void verifierAlertes();
+
+    // ==================== NOUVEAU: ARDUINO EMPLOYÉ ====================
+private:
+    Arduino_o arduinoEmploye;  // <-- AJOUT: Votre Arduino pour recherche employé
+    QLabel *labelResultatRechercheEmploye;  // <-- AJOUT: Pour afficher le résultat
+    QTimer *timerArduinoEmploye;
+    QString bufferArduinoEmploye;
+
+    // Méthodes pour Arduino employé
+    void initialiserArduinoEmploye();  // <-- AJOUT
+    void lireDonneesArduinoEmploye();  // <-- AJOUT
+    void traiterBufferArduinoEmploye();  // <-- AJOUT
+    void rechercherEmployeParID(const QString &id);  // <-- AJOUT
+    void afficherResultatRechercheEmploye(const QString &message, bool trouve);  // <-- AJOUT
 };
 
 #endif // OPTISMART_H
