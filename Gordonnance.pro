@@ -1,5 +1,6 @@
 QT       += core gui
 QT += core gui sql printsupport
+QT += core gui serialport sql
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -11,6 +12,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    arduino_o.cpp \
     connection.cpp \
     main.cpp \
     gordonnance.cpp \
@@ -18,6 +20,7 @@ SOURCES += \
     chatbot.cpp
 
 HEADERS += \
+    arduino_o.h \
     connection.h \
     gordonnance.h \
     ordonnance.h \

@@ -7,8 +7,12 @@
 #include <QSplitter>
 #include <QLabel>
 #include <QTabWidget>
+#include <QStatusBar>
 #include "ordonnance.h"
 #include "chatbot.h"
+#include "arduino_o.h"
+#include <QSqlQuery>
+#include <QTimer>
 
 namespace Ui {
 class Gordonnance;
@@ -26,14 +30,18 @@ private slots:
     void on_btnActualiser_clicked();
     void on_btnAjouter_clicked();
     void on_btnSupprimer_clicked();
-    void on_btnModifier_clicked();  // NOUVEAU SLOT
-    void on_tableWidget_clicked(const QModelIndex &index);  // Pour sélectionner une ligne
-    void on_pushButton_2_clicked();  // Bouton de recherche par CIN
-    void on_pushButton_5_clicked();  // Bouton d'export PDF
-    void on_pushButton_3_clicked();  // Bouton de tri par nom
-    void on_pushButton_10_clicked();  // Bouton de statistiques
-    void on_btnChatbotEnvoyer_clicked();  // Bouton d'envoi du chatbot
-    void on_lineEditChatbot_returnPressed();  // Entrée dans le champ de chat
+    void on_btnModifier_clicked();
+    void on_tableWidget_clicked(const QModelIndex &index);
+    void on_pushButton_2_clicked();
+    void on_pushButton_5_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_10_clicked();
+    void on_btnChatbotEnvoyer_clicked();
+    void on_lineEditChatbot_returnPressed();
+
+    // NOUVEAUX SLOTS POUR ARDUINO
+    void lireDonneesArduino();
+    void traiterBufferArduino();
 
 private:
     struct PrevisionData {
@@ -52,9 +60,17 @@ private:
     QTabWidget *tabWidgetPrincipal;
     Ordonnance ord;
     Chatbot chatbot;
-    QString cinSelectionne;  // Pour stocker le CIN sélectionné
-    QTextEdit *textEditChat;  // Zone de chat
-    QLineEdit *lineEditChatbot;  // Champ de saisie du chatbot
+
+    // ARDUINO
+    Arduino_o arduino_o;
+    QLabel *labelResultatRecherche;
+    QTimer *timerArduino;
+    QTimer *timeoutBuffer;
+    QString bufferArduino;
+
+    QString cinSelectionne;
+    QTextEdit *textEditChat;
+    QLineEdit *lineEditChatbot;
     QLabel *labelVolumeValeur;
     QLabel *labelVolumeDetail;
     QLabel *labelMedecinValeur;
@@ -64,12 +80,18 @@ private:
     int indexTabPrevision;
 
     void actualiserAffichage();
-    void initialiserChatbot(QWidget *parentWidget);  // Initialiser l'interface du chatbot
-    void initialiserPrevisions(QWidget *parentWidget);  // Initialiser l'onglet prévisions
-    void mettreAJourPrevisions();  // Rafraîchir les prévisions
-    PrevisionData calculerPrevisions() const;  // Calculer les prévisions basées sur les données
+    void initialiserChatbot(QWidget *parentWidget);
+    void initialiserPrevisions(QWidget *parentWidget);
+    void mettreAJourPrevisions();
+    PrevisionData calculerPrevisions() const;
     void ajouterMessageChat(const QString &message, bool estUtilisateur = false);
-    void verifierAlertes();  // Vérifier les alertes en temps réel
+    void verifierAlertes();
+
+    // NOUVELLES METHODES POUR ARDUINO
+    void initialiserArduino();
+    void rechercherEmployeParID(const QString &id);
+    void afficherResultatRecherche(const QString &message, bool trouve);
+    void extraireEtTraiterIDs(const QString &buffer);
 };
 
 #endif // GORDONNANCE_H
