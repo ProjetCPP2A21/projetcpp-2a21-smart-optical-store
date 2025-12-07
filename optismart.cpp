@@ -85,6 +85,8 @@
 #include <QTimer>//
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
+#include "arduinof.h"
+
 
 //produit
 using qrcodegen::QrCode;
@@ -142,7 +144,7 @@ optismart::optismart(QWidget *parent)
                                                  << "Date Naissance" << "Email" << "Téléphone"
                                                  << "Date Inscription" << "Points Fidélité" << "Catégorie");
     //chargerClients();
-    //arduino
+    //arduino keypad+moteur
     int ret = AC.connect_arduino();
 
     switch(ret) {
@@ -150,6 +152,11 @@ optismart::optismart(QWidget *parent)
     case 1: qDebug() << "Arduino trouvé mais impossible d'ouvrir."; break;
     case -1: qDebug() << "Arduino non détecté."; break;
     }
+    // ==================== GATE ARDUINO INITIALIZATION ====================
+    arduinoGate = new ArduinoF();
+    int gateStatus = arduinoGate->connect_arduino();
+    qDebug() << "Gate Arduino status:" << gateStatus;
+
     //  ajuster la taille des colonnes automatiquement
     ui->tableWidget_c->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //
@@ -325,9 +332,16 @@ optismart::~optismart()
         timerArduinoEmploye->stop();
         delete timerArduinoEmploye;
     }
+
+    // ========== ADD THESE 3 LINES ==========
+    if (arduinoGate) {
+        arduinoGate->close_arduino();
+        delete arduinoGate;
+    }
+    // =======================================
+
     delete ui;
 }
-
 void optismart::setupCarteFournisseurs()
 {
     m_mapDialog = new QDialog(this);
@@ -2791,7 +2805,18 @@ optismart::PrevisionData optismart::calculerPrevisions() const
 
     return resultat;
 }
-// ==================== ARDUINO EMPLOYÉ ====================
+// ==================== ARDUINO id EMPLOYÉ ====================
+// Add this function anywhere in optismart.cpp (maybe after the destructor)
+void optismart::writeToGateArduino(const QString &data)
+{
+    if (arduinoGate && arduinoGate->getserial()->isWritable()) {
+        QByteArray byteData = data.toUtf8();
+        arduinoGate->write_to_arduino(byteData);
+        qDebug() << "Gate Arduino command sent:" << data;
+    } else {
+        qDebug() << "Gate Arduino not writable or not connected";
+    }
+}
 
 void optismart::initialiserArduinoEmploye()
 {
@@ -2892,17 +2917,27 @@ void optismart::rechercherEmployeParID(const QString &id)
                                .arg(prenom, nom, poste, id);
         afficherResultatRechercheEmploye(resultat, true);
 
+        // ========== ADD THIS LINE ==========
+        // Send '1' to Arduino to OPEN GATE
+        writeToGateArduino("1");
+        // ===================================
+
         // Envoyer une confirmation à Arduino
         arduinoEmploye.write_to_arduino("1"); // 1 = trouvé
+
     } else {
         QString resultat = QString("❌ ID %1 non trouvé dans la base de données").arg(id);
         afficherResultatRechercheEmploye(resultat, false);
+
+        // ========== ADD THIS LINE ==========
+        // Send '0' to Arduino to KEEP GATE CLOSED
+        writeToGateArduino("0");
+        // ===================================
 
         // Envoyer un signal à Arduino
         arduinoEmploye.write_to_arduino("0"); // 0 = non trouvé
     }
 }
-
 void optismart::afficherResultatRechercheEmploye(const QString &message, bool trouve)
 {
     if (!labelResultatRechercheEmploye) return;
@@ -2934,6 +2969,8 @@ void optismart::afficherResultatRechercheEmploye(const QString &message, bool tr
         }
     });
 }
+
+
 
 
 

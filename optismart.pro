@@ -15,6 +15,7 @@ CONFIG += c++17
 
 SOURCES += \
     arduino_o.cpp \
+    arduinof.cpp \
     main.cpp \
     optismart.cpp \
     client.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
     arduino_o.h \
+    arduinof.h \
     optismart.h \
     client.h \
     produit.h \

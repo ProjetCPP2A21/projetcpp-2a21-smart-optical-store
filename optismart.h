@@ -24,6 +24,9 @@
 #include <QDialog>
 #include <QVBoxLayout>
 #include "arduino_o.h"  // <-- AJOUT: Votre Arduino pour recherche employé
+#include "arduinof.h"
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class optismart; }
@@ -43,7 +46,9 @@ public:
 
 private:
     Ui::optismart *ui;
-
+    // ==================== GATE CONTROL ====================
+        ArduinoF *arduinoGate;  // For motor control
+    void writeToGateArduino(const QString &data);  // Send 1/0 to Arduino
     // ==================== FOURNISSEUR ====================
 private slots:
     void on_bajouter_f_clicked();
