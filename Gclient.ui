@@ -769,7 +769,7 @@ font: 16pt &quot;Segoe UI&quot;;</string>
       <widget class="QPushButton" name="brechercher_c">
        <property name="geometry">
         <rect>
-         <x>580</x>
+         <x>490</x>
          <y>20</y>
          <width>161</width>
          <height>41</height>
@@ -782,24 +782,6 @@ color: rgb(51, 51, 51);</string>
        </property>
        <property name="text">
         <string>🔍Recherche</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="bhistorique_c">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>380</y>
-         <width>161</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(168, 213, 186);
-font: 14pt &quot;Segoe UI&quot;;
-color: rgb(51, 51, 51);</string>
-       </property>
-       <property name="text">
-        <string>📜 Historique</string>
        </property>
       </widget>
       <widget class="QPushButton" name="bexporter_c">
@@ -823,7 +805,7 @@ color: rgb(51, 51, 51);</string>
       <widget class="QLineEdit" name="lineEdit_recherche_c">
        <property name="geometry">
         <rect>
-         <x>310</x>
+         <x>270</x>
          <y>20</y>
          <width>211</width>
          <height>41</height>
@@ -836,6 +818,9 @@ font: 11pt &quot;Segoe UI&quot;;
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Recherche Selon Id</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_15_c">
@@ -858,10 +843,10 @@ font: 16pt &quot;Segoe UI&quot;;</string>
       <widget class="QPushButton" name="btrier_c">
        <property name="geometry">
         <rect>
-         <x>340</x>
-         <y>80</y>
-         <width>151</width>
-         <height>29</height>
+         <x>200</x>
+         <y>380</y>
+         <width>161</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -995,6 +980,27 @@ color: rgb(51, 51, 51);</string>
        </property>
        <property name="styleSheet">
         <string notr="true">border-color: rgb(0, 0, 0);</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_id">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>70</y>
+         <width>211</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(102, 102, 102);
+font: 11pt &quot;Segoe UI&quot;;
+</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Affiche Selon Id Sur Lcd</string>
        </property>
       </widget>
      </widget>

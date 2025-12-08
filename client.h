@@ -61,6 +61,23 @@ public:
     static QString genererCodePromo();
     void envoyerEmailAnniversaire();
     int joursRestantsAnniversaire() const;
+    //modele
+    // Pour afficher tous les clients
+    QSqlQueryModel* afficherTousClients();
+
+    // Pour rechercher un client par ID
+    QSqlQueryModel* rechercherClientParId(int id);
+
+    // Pour trier les clients (par nom ou points, etc.)
+    QSqlQueryModel* trierClientsParNom();
+    QSqlQueryModel* trierClientsParPoints();
+
+    // Pour les statistiques d'âge
+    QMap<QString, int> getStatistiquesAge();
+    // Dans la section public de la classe client
+    QPair<QString, int> rechercherNomEtPointsParId(int id_client) const;
+
+
 
 
 

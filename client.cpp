@@ -286,7 +286,6 @@ QString client::genererCodePromo() {
     const QString chars("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
     QString code;
     for (int i = 0; i < 8; i++) {
-        //code += chars[qrand() % chars.length()];
         code += chars[QRandomGenerator::global()->bounded(chars.length())];
 
     }
@@ -360,6 +359,91 @@ int client::joursRestantsAnniversaire() const
         prochainAniv = prochainAniv.addYears(1);
 
     return today.daysTo(prochainAniv);
+}
+// client.cpp
+
+QSqlQueryModel* client::afficherTousClients()
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT id_client, nom, prenom, date_naissance, email, "
+                    "num_tel, date_inscri, point_fedelite FROM client "
+                    "ORDER BY nom");
+    model->setHeaderData(0, Qt::Horizontal, "ID");
+    model->setHeaderData(1, Qt::Horizontal, "Nom");
+    model->setHeaderData(2, Qt::Horizontal, "Prénom");
+    model->setHeaderData(3, Qt::Horizontal, "Date Naissance");
+    model->setHeaderData(4, Qt::Horizontal, "Email");
+    model->setHeaderData(5, Qt::Horizontal, "Téléphone");
+    model->setHeaderData(6, Qt::Horizontal, "Date Inscription");
+    model->setHeaderData(7, Qt::Horizontal, "Points Fidélité");
+    return model;
+}
+
+QSqlQueryModel* client::rechercherClientParId(int id)
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+    QSqlQuery query;
+    query.prepare("SELECT id_client, nom, prenom, date_naissance, email, "
+                  "num_tel, date_inscri, point_fedelite FROM client WHERE id_client = ?");
+    query.addBindValue(id);
+    query.exec();
+    model->setQuery(query);
+    return model;
+}
+
+QSqlQueryModel* client::trierClientsParNom()
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT id_client, nom, prenom, date_naissance, email, "
+                    "num_tel, date_inscri, point_fedelite FROM client ORDER BY nom ASC");
+    return model;
+}
+
+QSqlQueryModel* client::trierClientsParPoints()
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT id_client, nom, prenom, date_naissance, email, "
+                    "num_tel, date_inscri, point_fedelite FROM client ORDER BY point_fedelite DESC");
+    return model;
+}
+
+QMap<QString, int> client::getStatistiquesAge()
+{
+    QMap<QString, int> stats;
+    stats["Moins de 25 ans"] = 0;
+    stats["25 - 40 ans"] = 0;
+    stats["40 - 60 ans"] = 0;
+    stats["Plus de 60 ans"] = 0;
+
+    QSqlQuery query("SELECT date_naissance FROM client");
+    while (query.next()) {
+        QDate dateNais = QDate::fromString(query.value(0).toString(), "dd/MM/yyyy");
+        if (!dateNais.isValid())
+            dateNais = QDate::fromString(query.value(0).toString(), "yyyy-MM-dd");
+
+        if (!dateNais.isValid()) continue;
+
+        int age = dateNais.daysTo(QDate::currentDate()) / 365.2425;
+
+        if (age < 25) stats["Moins de 25 ans"]++;
+        else if (age < 40) stats["25 - 40 ans"]++;
+        else if (age < 60) stats["40 - 60 ans"]++;
+        else stats["Plus de 60 ans"]++;
+    }
+    return stats;
+}
+QPair<QString, int> client::rechercherNomEtPointsParId(int id_client) const
+{
+    QSqlQuery query;
+    query.prepare("SELECT NOM, POINT_FEDELITE FROM client WHERE ID_CLIENT = :id");
+    query.bindValue(":id", id_client);
+
+    if (query.exec() && query.next()) {
+        QString nom = query.value("NOM").toString();
+        int points = query.value("POINT_FEDELITE").toInt();
+        return qMakePair(nom, points);
+    }
+    return qMakePair(QString("INCONNU"), 0); // client non trouvé
 }
 
 

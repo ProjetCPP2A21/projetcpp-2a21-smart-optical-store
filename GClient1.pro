@@ -5,6 +5,8 @@ QT       += charts sql widgets core gui
 QT       += core gui sql widgets charts
 QT       += charts
 QT       += network
+//arduino
+QT       += serialport
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -17,6 +19,7 @@ CONFIG += c++17
 
 SOURCES += \
     Gclient.cpp \
+    arduino_client.cpp \
     client.cpp \
     connection.cpp \
     main.cpp \
@@ -24,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     Gclient.h \
+    arduino_client.h \
     client.h \
     connection.h \
     smtp.h

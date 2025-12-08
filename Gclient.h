@@ -9,6 +9,8 @@
 #include <QWidget>
 #include <QMainWindow>
 #include <QTableWidgetItem>
+//arduino
+#include "arduino_client.h"
 
 namespace Ui {
 class Gclient;
@@ -48,6 +50,14 @@ private slots:
      void on_tableWidget_c_horizontalHeader_sectionClicked(int column);
      void mettreAJourCategorie(int row, int col);
      void recolorerToutesLesLignes();
+//arduino
+ private:
+     arduino_client AC;  // objet Arduino pour module client
+
+ private slots:
+     void on_lineEdit_id_textChanged(const QString &arg1);
+
+
 
 private:
     Ui::Gclient *ui;

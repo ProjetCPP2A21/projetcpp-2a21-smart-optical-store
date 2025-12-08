@@ -59,6 +59,15 @@ Gclient::Gclient(QWidget *parent)
 
     // Afficher les clients
     afficher_client();
+    //arduino
+    int ret = AC.connect_arduino();
+
+    switch(ret) {
+    case 0: qDebug() << "Arduino connecté."; break;
+    case 1: qDebug() << "Arduino trouvé mais impossible d'ouvrir."; break;
+    case -1: qDebug() << "Arduino non détecté."; break;
+    }
+
 }
 
 Gclient::~Gclient()
@@ -281,41 +290,36 @@ void Gclient::on_bmodifier_c_clicked()
     }
 }
 
+
 void Gclient::on_brechercher_c_clicked()
 {
     bool ok;
     int id = ui->lineEdit_recherche_c->text().toInt(&ok);
-    if (!ok) {
+    if (!ok || id <= 0) {
         QMessageBox::warning(this, "Erreur", "Veuillez entrer un ID valide !");
         return;
     }
 
-    // Vider le tableau avant d'afficher le résultat
-    ui->tableWidget_c->setRowCount(0);
+    client c;
+    QSqlQueryModel *model = c.rechercherClientParId(id);
+    ui->tableWidget_c->setRowCount(0);  // vider
 
-    // Préparer la requête pour récupérer uniquement le client recherché
-    QSqlQuery query;
-    query.prepare("SELECT id_client, nom, prenom, date_naissance, email, num_tel, date_inscri, point_fedelite FROM client WHERE id_client = :id");
-    query.bindValue(":id", id);
-
-    if (!query.exec()) {
-        QMessageBox::critical(this, "Erreur", "Erreur lors de la recherche : " + query.lastError().text());
-        return;
-    }
-
-    if (!query.next()) {
+    if (model->rowCount() == 0) {
         QMessageBox::information(this, "Résultat", "❌ Aucun client trouvé !");
+        delete model;
         return;
     }
 
     // Afficher la ligne trouvée
     ui->tableWidget_c->insertRow(0);
 
-    int points = query.value(7).toInt();
+    // Calculer la catégorie
+    int points = model->data(model->index(0, 7)).toInt();
     QString categorie = calculerCategorie(points);
 
+    // Remplir les 8 premières colonnes
     for (int col = 0; col < 8; ++col) {
-        ui->tableWidget_c->setItem(0, col, new QTableWidgetItem(query.value(col).toString()));
+        ui->tableWidget_c->setItem(0, col, new QTableWidgetItem(model->data(model->index(0, col)).toString()));
     }
 
     // Ajouter la colonne catégorie
@@ -324,14 +328,20 @@ void Gclient::on_brechercher_c_clicked()
 
     // Appliquer la couleur à toute la ligne
     QColor couleur;
-    if (categorie == "VIP") couleur = QColor(144,238,144);
-    else if (categorie == "Régulier") couleur = QColor(173,216,230);
-    else couleur = QColor(211,211,211);
+    if (categorie == "VIP")
+        couleur = QColor(144, 238, 144);
+    else if (categorie == "Régulier")
+        couleur = QColor(173, 216, 230);
+    else
+        couleur = QColor(211, 211, 211);
 
-    for (int col = 0; col < ui->tableWidget_c->columnCount(); ++col)
+    for (int col = 0; col < ui->tableWidget_c->columnCount(); ++col) {
         ui->tableWidget_c->item(0, col)->setBackground(couleur);
+    }
 
     QMessageBox::information(this, "Résultat", "✅ Client trouvé !");
+
+    delete model;
 }
 
 void Gclient::on_btrier_c_clicked()
@@ -358,31 +368,17 @@ void Gclient::on_bexporter_c_clicked()
     }
 }
 
+
 void Gclient::afficherStatistiques_client()
 {
-    int moins25 = 0, entre25et40 = 0, entre40et60 = 0, plus60 = 0;
+    client c;
+    QMap<QString, int> stats = c.getStatistiquesAge();  // ← Requête propre dans client.cpp
 
-    QSqlQuery query("SELECT date_naissance FROM client");
-    while (query.next())
-    {
-        QString dateStr = query.value(0).toString().trimmed();
-        QDate dateNais = QDate::fromString(dateStr, "dd/MM/yyyy");
-        if (!dateNais.isValid())
-            dateNais = QDate::fromString(dateStr, "yyyy-MM-dd");
-        if (!dateNais.isValid())
-            continue;
-
-        int age = dateNais.daysTo(QDate::currentDate()) / 365;
-
-        if (age < 25)
-            moins25++;
-        else if (age < 40)
-            entre25et40++;
-        else if (age < 60)
-            entre40et60++;
-        else
-            plus60++;
-    }
+    // On récupère les valeurs depuis le modèle (plus de SQL ici !)
+    int moins25     = stats["Moins de 25 ans"];
+    int entre25et40 = stats["25 - 40 ans"];
+    int entre40et60 = stats["40 - 60 ans"];
+    int plus60      = stats["Plus de 60 ans"];
 
     QPieSeries *series = new QPieSeries();
     series->append("Moins de 25 ans", moins25);
@@ -390,6 +386,7 @@ void Gclient::afficherStatistiques_client()
     series->append("40 - 60 ans", entre40et60);
     series->append("Plus de 60 ans", plus60);
 
+    // Ton style actuel (tu le gardes à 100%)
     for (auto slice : series->slices())
         slice->setLabelVisible(true);
 
@@ -398,19 +395,16 @@ void Gclient::afficherStatistiques_client()
     chart->setTitle("Répartition des clients selon leur âge");
     chart->setAnimationOptions(QChart::AllAnimations);
 
-    // Création du QChartView
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
 
-    // Supprimer l'ancien contenu s'il existe
+    // Nettoyage propre de l'ancien graphique
     QLayout *layout = ui->chartContainer->layout();
-    if (!layout)
+    if (!layout) {
         layout = new QVBoxLayout(ui->chartContainer);
-    else
-    {
+    } else {
         QLayoutItem *item;
-        while ((item = layout->takeAt(0)) != nullptr)
-        {
+        while ((item = layout->takeAt(0)) != nullptr) {
             delete item->widget();
             delete item;
         }
@@ -419,7 +413,6 @@ void Gclient::afficherStatistiques_client()
     layout->addWidget(chartView);
     ui->chartContainer->setLayout(layout);
 }
-
 
 
 void Gclient::on_bstatistique_c_clicked()
@@ -451,81 +444,42 @@ void Gclient::colorerCategorie(QTableWidgetItem *item)
     }
 }
 
+
+//model
 void Gclient::afficher_client(int id_selectionne)
 {
-    ui->tableWidget_c->setRowCount(0); // vider la table avant remplissage
+    client c;
+    QSqlQueryModel *model = c.afficherTousClients();
 
-    QSqlQuery query("SELECT id_client, nom, prenom, date_naissance, email, num_tel, date_inscri, point_fedelite FROM client");
+    ui->tableWidget_c->setRowCount(0);
 
-    int row = 0;
-    int ligne_selection = -1;
-
-    while (query.next()) {
-        int id = query.value(0).toInt();
-        QString nom = query.value(1).toString();
-        QString prenom = query.value(2).toString();
-        QString date_naissance = query.value(3).toString();
-        QString email = query.value(4).toString();
-        int num_tel = query.value(5).toInt();
-        QString date_inscri = query.value(6).toString();
-        int points = query.value(7).toInt();
-
+    for (int row = 0; row < model->rowCount(); ++row) {
         ui->tableWidget_c->insertRow(row);
 
-        // Ajouter les colonnes existantes
-        ui->tableWidget_c->setItem(row, 0, new QTableWidgetItem(QString::number(id)));
-        ui->tableWidget_c->setItem(row, 1, new QTableWidgetItem(nom));
-        ui->tableWidget_c->setItem(row, 2, new QTableWidgetItem(prenom));
-        ui->tableWidget_c->setItem(row, 3, new QTableWidgetItem(date_naissance));
-        ui->tableWidget_c->setItem(row, 4, new QTableWidgetItem(email));
-        ui->tableWidget_c->setItem(row, 5, new QTableWidgetItem(QString::number(num_tel)));
-        ui->tableWidget_c->setItem(row, 6, new QTableWidgetItem(date_inscri));
-        ui->tableWidget_c->setItem(row, 7, new QTableWidgetItem(QString::number(points)));
+        for (int col = 0; col < 8; ++col) {
+            QString data = model->data(model->index(row, col)).toString();
+            ui->tableWidget_c->setItem(row, col, new QTableWidgetItem(data));
+        }
 
-        // Calculer la catégorie et ajouter dans la colonne 8
-        QString categorie;
-        if (points >= 500)
-            categorie = "VIP";
-        else if (points >= 100)
-            categorie = "Régulier";
-        else
-            categorie = "Nouveau";
-
+        // Colonne 8 : Catégorie
+        int points = model->data(model->index(row, 7)).toInt();
+        QString categorie = calculerCategorie(points);
         QTableWidgetItem *catItem = new QTableWidgetItem(categorie);
         ui->tableWidget_c->setItem(row, 8, catItem);
 
-        // Appliquer la couleur selon la catégorie
-        QColor couleur;
-        if (categorie == "VIP")
-            couleur = QColor(144, 238, 144); // vert clair
-        else if (categorie == "Régulier")
-            couleur = QColor(173, 216, 230); // bleu clair
-        else
-            couleur = QColor(211, 211, 211); // gris clair
+        // Couleur de ligne
+        QColor couleur = (categorie == "VIP") ? QColor(144,238,144) :
+                             (categorie == "Régulier") ? QColor(173,216,230) :
+                             QColor(211,211,211);
 
-        // Appliquer la couleur sur toute la ligne
-        for (int col = 0; col <= 8; ++col) {
+        for (int col = 0; col < 9; ++col)
             ui->tableWidget_c->item(row, col)->setBackground(couleur);
-        }
-
-        // Vérifier si c'est la ligne sélectionnée
-        if (id == id_selectionne)
-            ligne_selection = row;
-
-        row++;
     }
-
-    // Surligner la ligne modifiée (au-dessus de la couleur catégorie)
-    if (ligne_selection != -1) {
-        for (int c = 0; c <= 8; ++c) {
-            ui->tableWidget_c->item(ligne_selection, c)->setBackground(Qt::yellow);
-        }
-        ui->tableWidget_c->selectRow(ligne_selection);
-    }
-
     // activer tri et désactiver alternance automatique
     ui->tableWidget_c->setSortingEnabled(true);
     ui->tableWidget_c->setAlternatingRowColors(false);
+
+    delete model; // important
 }
 
 
@@ -644,6 +598,126 @@ void Gclient::recolorerToutesLesLignes()
 
 
 
+
+
+
+
+
+
+/*void Gclient::on_lineEdit_id_textChanged(const QString &arg1)
+{
+    bool ok;
+    int id_client = arg1.toInt(&ok);
+
+    if(!ok || id_client <= 0)
+        return; // éviter les erreurs
+
+    QSqlQuery query;
+    query.prepare("SELECT nom, points FROM client WHERE id = :id");
+    query.bindValue(":id", id_client);
+    query.exec();
+
+    if(query.next())
+    {
+        QString nom = query.value("nom").toString();
+        int points = query.value("points").toInt();
+
+        QString msg = "NOM:" + nom + ";POINTS:" + QString::number(points) + "\n";
+
+        AC.write_to_arduino(msg.toUtf8());
+
+        qDebug() << "Envoyé à Arduino :" << msg;
+    }
+}*/
+/*void Gclient::on_lineEdit_id_textChanged(const QString &arg1)
+{
+    bool ok;
+    int id_client = arg1.toInt(&ok);
+
+    if (!ok || id_client <= 0)
+        return; // éviter erreurs si vide ou non-numérique
+
+    QSqlQuery query;
+    query.prepare("SELECT nom, point_fedelite FROM client WHERE id = :id");
+    query.bindValue(":id", id_client);
+
+    if (!query.exec()) {
+        qDebug() << "Erreur SQL :" << query.lastError();
+        return;
+    }
+
+    if (query.next()) {
+        QString nom = query.value("nom").toString();
+        int points = query.value("point_fidelite").toInt();
+
+        // Format attendu par Arduino : NOM|POINTS
+        QString message = nom + "|" + QString::number(points) + "\n";
+
+        AC.write_to_arduino(message.toUtf8());
+
+        qDebug() << "Envoyé à Arduino :" << message;
+    }
+}*/
+//grock marche 100%
+/*void Gclient::on_lineEdit_id_textChanged(const QString &arg1)
+{
+    bool ok;
+    int id_client = arg1.toInt(&ok);
+    if (!ok || id_client <= 0)
+        return;
+
+    QSqlQuery query;
+    // Attention aux vrais noms des colonnes dans ta table Oracle !
+    query.prepare("SELECT NOM, POINT_FEDELITE FROM client WHERE ID_CLIENT = :id");
+
+    query.bindValue(":id", id_client);
+
+    if (!query.exec()) {
+        qDebug() << "Erreur SQL :" << query.lastError().text();
+        qDebug() << "Requête exécutée :" << query.lastQuery();
+        qDebug() << "Valeurs bindées : id =" << id_client;
+        return;
+    }
+
+    if (query.next()) {
+        QString nom = query.value("NOM").toString();           // ou query.value(0)
+        int points = query.value("POINT_FEDELITE").toInt();    // ou query.value(1)
+
+        QString message = nom + "|" + QString::number(points) + "\n";
+        AC.write_to_arduino(message.toUtf8());
+        qDebug() << "Envoyé à Arduino :" << message;
+    } else {
+        qDebug() << "Aucun client trouvé avec ID_CLIENT =" << id_client;
+    }
+}*/
+//sans requette
+void Gclient::on_lineEdit_id_textChanged(const QString &arg1)
+{
+    bool ok;
+    int id_client = arg1.toInt(&ok);
+    if (!ok || id_client <= 0)
+        return;
+
+    // Utilisation de la classe client
+    client c;
+    QPair<QString, int> resultat = c.rechercherNomEtPointsParId(id_client);
+
+    QString nom = resultat.first;
+    int points = resultat.second;
+
+    // Si le client n'existe pas → on peut envoyer un message clair à l'Arduino
+    if (nom == "INCONNU") {
+        QString message = "ERREUR|0\n";  // ou "CLIENT INEXISTANT|0\n"
+        AC.write_to_arduino(message.toUtf8());
+        qDebug() << "Client non trouvé pour ID:" << id_client;
+        return;
+    }
+
+    // Format : NOM|POINTS\n
+    QString message = nom + "|" + QString::number(points) + "\n";
+    AC.write_to_arduino(message.toUtf8());
+    qDebug() << "Envoyé à Arduino :" << message;
+}
 
 
 
